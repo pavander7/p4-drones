@@ -8,9 +8,6 @@
 
 using namespace std;
 
-struct Vertex;
-class MST;
-
 int main (int argc, char* argv[]) {
     // step one: setup
     ios_base::sync_with_stdio(false);
