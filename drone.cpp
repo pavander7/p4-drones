@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include "MST.h"
+#include "FASTTSP.h"
 
 using namespace std;
 
@@ -79,7 +80,8 @@ int main (int argc, char* argv[]) {
             cout << graph;
             break;
         } case 'B' : {
-            cerr << "unimplemented\n";
+            FASTTSP graph(data);
+            cout << graph;
             break;
         } case 'C' : {
             cerr << "unimplemented\n";

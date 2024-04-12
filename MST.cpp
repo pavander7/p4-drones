@@ -4,20 +4,6 @@
 
 using namespace std;
 
-//vertex functions
-int Vertex::area() {
-    if (x < 0 && y < 0) return 2;
-    else if ((x == 0 && y < 0)||(y == 0 && x < 0)) return 1;
-    else return 0;
-}
-
-int Vertex::pow_dist (Vertex &other) {
-    int X = this->x - other.x;
-    int Y = this->y - other.y;
-    return ((X*X)+(Y*Y));
-}
-//vertex functions
-
 //MST functions
 MST::MST (vector<Vertex> &data) {
     unordered_set<Vertex> Q;
@@ -53,14 +39,10 @@ std::ostream& operator<<(std::ostream& os, const MST& elt) {
     for (auto n : elt.F) os << n << endl;
     return os;
 }
-//MST functions
-
-//TSP functions
-TSP::TSP(std::vector<Vertex> &data) {
-    for (auto datum : data) {Q.insert(datum);}
-    F.reserve(data.size());
-    auto her = data.front();
-    Q.erase(her);
-    
+vector<Vertex> MST::out() {
+    vector<Vertex> output;
+    for (auto step : F) {
+        output.push_back(step->vtx);
+    } return output;
 }
-//TSP functions
+//MST functions
