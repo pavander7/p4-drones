@@ -1,12 +1,15 @@
 //1761414855B69983BD8035097EFBD312EB0527F0
 
+#ifndef OPTTSP_H
+#define OPTTSP_H
+
 #include <iostream>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
 #include <queue>
 #include <cmath>
-#include "FASTTSP.h"
+#include "vertex.h"
 
 class OPTTSP {
 public:
@@ -20,8 +23,8 @@ private:
 
 class OPTTSP::Node {
 public: 
-    OPTTSP::Node::Node(Vertex vtx_in, int C_in) : vtx(vtx_in), C(C_in), E(nullptr) {}
-    OPTTSP::Node::Node(Vertex vtx_in, int C_in, Node* next) : vtx(vtx_in), C(C_in), E(next) {}
+    Node(Vertex vtx_in, int C_in) : vtx(vtx_in), C(C_in), E(nullptr) {}
+    Node(Vertex vtx_in, int C_in, Node* next) : vtx(vtx_in), C(C_in), E(next) {}
     void reassign(Node* next) {E = next; C = vtx.pow_dist(next->vtx);}
     int insert_dist (Vertex &elt);
     Node* encorporate (Vertex &elt);
@@ -35,3 +38,5 @@ private:
     int C;
     OPTTSP::Node* E;
 };
+
+#endif

@@ -1,5 +1,8 @@
 //1761414855B69983BD8035097EFBD312EB0527F0
 
+#ifndef MST_H
+#define MST_H
+
 #include <iostream>
 #include <vector>
 #include <unordered_map>
@@ -25,10 +28,10 @@ class MST::Node {
 public:
     Node(Vertex &v_in, int C_in, Vertex E_in) : vtx(v_in), C(C_in), E(E_in) {}
     int area() {return vtx.area();}
-    int pow_dist(Node &other) {this->vtx.pow_dist(other.vtx);}
-    int pow_dist(Vertex &other) {this->vtx.pow_dist(other);}
+    int pow_dist(Node &other) {return this->vtx.pow_dist(other.vtx);}
+    int pow_dist(Vertex &other) {return this->vtx.pow_dist(other);}
     friend class MST;
-    friend struct NodeComp;
+    friend class NodeComp;
     friend std::ostream& operator<<(std::ostream& os, const Node& elt) {
         os << elt.vtx.i << ' ' << elt.E.i;
         return os;
@@ -39,7 +42,8 @@ private:
     Vertex E;
 };
 
-struct MST::NodeComp {
+class MST::NodeComp {
+public:
     bool operator() (const Node &a, const Node &b) const {
         if (a.C == b.C) return true;
         else return (a.C < b.C);
@@ -48,3 +52,5 @@ struct MST::NodeComp {
         else return (a->C < b->C);
     }
 };
+
+#endif

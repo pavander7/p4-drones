@@ -3,8 +3,10 @@
 #include <getopt.h>
 #include <iostream>
 #include <vector>
+#include "vertex.h"
 #include "MST.h"
 #include "FASTTSP.h"
+#include "OPTTSP.h"
 
 using namespace std;
 
@@ -77,9 +79,9 @@ int main (int argc, char* argv[]) {
             cout << graph;
             break;
         } case 'B' : {
-            FASTTSP graph(data);
+            /*FASTTSP graph(data);
             cout << graph;
-            break;
+            break;*/
         } case 'C' : {
             cerr << "unimplemented\n";
             break;
