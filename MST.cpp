@@ -8,7 +8,8 @@ using namespace std;
 MST::MST(vector<Vertex> &data)
 {
     unordered_set<size_t> Q;
-    priority_queue<Node *, vector<Node *>, NodeComp> poss;
+    //priority_queue<Node *, vector<Node *>, NodeComp> poss;
+    unordered_map<size_t, Node*> poss;
     total_C = 0;
     for (size_t I = 0; I < data.size(); I++)
     {
@@ -22,14 +23,17 @@ MST::MST(vector<Vertex> &data)
         if (v.area() == 1 || w.area() == 1 || w.area() == v.area())
         {
             Node *W = new Node(v, v.pow_dist(w), w);
-            poss.push(W);
+            if (poss.count(w.i) != 0 && poss[w.i]->C > W->C) poss[w.i] = W;
+            else if (poss.count(w.i) == 0) poss.emplace(w.i, W);
         }
     }
     while (!Q.empty())
     {
-        Node *her = poss.top();
-        poss.pop();
-        if (Q.count(her->E.i) != 0)
+        priority_queue<Node *, vector<Node *>, NodeComp> opts;
+        for (auto [key, elt] : poss) {opts.push(elt);}
+        Node *her = opts.top();
+        poss.erase(her->E.i);
+        //if (Q.count(her->E.i) != 0)
         {
             Q.erase(her->E.i);
             F.push_back(her);
@@ -40,7 +44,8 @@ MST::MST(vector<Vertex> &data)
                 if (her->E.area() == 1 || w.area() == 1 || w.area() == her->E.area())
                 {
                     Node *W = new Node(her->E, her->E.pow_dist(w), w);
-                    poss.push(W);
+                    if (poss.count(w.i) != 0 && poss[w.i]->C > W->C) poss[w.i] = W;
+                    else if (poss.count(w.i) == 0) poss.emplace(w.i, W);
                 }
             }
         }
