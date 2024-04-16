@@ -31,7 +31,7 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0)
 { // nearest insertion heuristic
     unordered_set<size_t> Q;
     unordered_map<size_t, Node *> F;
-    for (size_t I = 0; I < data.size(); I++)
+    for (size_t I = 2; I < data.size(); I++)
     {
         Q.insert(I);
     }
@@ -64,9 +64,14 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0)
                 }
             }
         }
-        total_C += before->insert_dist(to_add);
+        //total_C += before->insert_dist(to_add);
         Q.erase(to_add.i);
         F.emplace(to_add.i, before->encorporate(to_add));
+    } Node* current = root;
+    total_C += sqrt(current->dist());
+    while (current->next() != root) {
+        current = current->next();
+        total_C += sqrt(current->dist());
     }
 }
 uint64_t FASTTSP::Node::insert_dist(Vertex &elt)
@@ -83,11 +88,12 @@ std::ostream &operator<<(std::ostream &os, const FASTTSP &elt)
 {
     os << elt.total_C << endl;
     FASTTSP::Node *current = elt.root;
+    os << *current << ' ';
     while (current->next() != elt.root)
     {
-        os << current << ' ';
         current = current->next();
-    }
+        os << *current << ' ';
+    } os << endl;
     return os;
 }
 // FASTTSP functions

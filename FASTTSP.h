@@ -20,7 +20,7 @@ public:
 private:
     class Node;
     Node *root;
-    uint64_t total_C;
+    double total_C;
 };
 
 class FASTTSP::Node
@@ -34,6 +34,7 @@ public:
         C = vtx.pow_dist(next->vtx);
     }
     uint64_t insert_dist(Vertex &elt);
+    uint64_t dist() const {return C;}
     Node *encorporate(Vertex &elt);
     Node *next() { return this->E; }
     friend std::ostream &operator<<(std::ostream &os, const Node &elt)

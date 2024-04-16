@@ -29,3 +29,5 @@ my-spec-test-MST-out.txt
 my-sample-e-MST-out.txt
 drone_valgrind.dSYM/Contents/Resources/DWARF/drone_valgrind
 drone_valgrind.dSYM/Contents/Resources/DWARF/drone_valgrind
+my-sample-c-FASTTSP-out.txt
+drone_valgrind

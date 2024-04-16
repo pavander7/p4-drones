@@ -81,9 +81,9 @@ int main (int argc, char* argv[]) {
             cout << graph;
             break;
         } case 'B' : {
-            /*FASTTSP graph(data);
+            FASTTSP graph(data);
             cout << graph;
-            break;*/
+            break;
         } case 'C' : {
             cerr << "unimplemented\n";
             break;
