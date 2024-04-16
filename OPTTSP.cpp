@@ -1,32 +1,46 @@
-//1761414855B69983BD8035097EFBD312EB0527F0
+// 1761414855B69983BD8035097EFBD312EB0527F0
 
 #include "OPTTSP.h"
 
 using namespace std;
 
+/* template <typename T>
+void genPerms(vector<T> &path, size_t permLength)
+{
+    if (permLength == path.size())
+    {
+        // Do something with the path
+        return;
+    } // if ..complete path
+
+    if (!promising(path, permLength))
+    {
+        return;
+    } // if ..not promising
+
+    for (size_t i = permLength; i < path.size(); ++i)
+    {
+        swap(path[permLength], path[i]);
+        genPerms(path, permLength + 1);
+        swap(path[permLength], path[i]);
+    } // for ..unpermuted elements
+} // genPerms()
+
 template <typename T>
-void genPerms(vector<T> &path, size_t permLength) {
-  if (permLength == path.size()) {
-  // Do something with the path
-    return;
-  }  // if ..complete path
+bool promising(vector<T> &path, size_t permLength)
+{
+    return true;
+}
 
-  if (!promising(path, permLength)) {
-    return;
-  }  // if ..not promising
-
-  for (size_t i = permLength; i < path.size(); ++i) {
-    swap(path[permLength], path[i]);
-    genPerms(path, permLength + 1);
-    swap(path[permLength], path[i]);
-  }  // for ..unpermuted elements
-}  // genPerms()
-
-//OPTTSP functions
-OPTTSP::OPTTSP(std::vector<Vertex> &data) : total_C(0) {
+// OPTTSP functions
+OPTTSP::OPTTSP(std::vector<Vertex> &data) : total_C(0)
+{
     unordered_set<size_t> Q;
-    unordered_map<size_t, Node*> F;
-    for (size_t I = 0; I < data.size(); I++) {Q.insert(I);}
+    unordered_map<size_t, Node *> F;
+    for (size_t I = 0; I < data.size(); I++)
+    {
+        Q.insert(I);
+    }
     {
         auto vtx1 = data[0];
         auto vtx2 = data[1];
@@ -38,4 +52,4 @@ OPTTSP::OPTTSP(std::vector<Vertex> &data) : total_C(0) {
         root = node1;
     }
 }
-//OPTTSP functions
+// OPTTSP functions */

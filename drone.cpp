@@ -2,6 +2,7 @@
 
 #include <getopt.h>
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include "vertex.h"
 #include "MST.h"
@@ -14,8 +15,8 @@ int main (int argc, char* argv[]) {
     // step one: setup
     ios_base::sync_with_stdio(false);
     std::cout.clear();
-    cin >> std::boolalpha;
-    std::cout << std::boolalpha;
+    cout << std::setprecision(2); //Always show 2 decimal places
+    cout << std::fixed; //Disable scientific notation for large numbers
     string modeName;
     bool mode_spec = false;
 
@@ -30,12 +31,13 @@ int main (int argc, char* argv[]) {
 
     //variables for input processing
 
-    int c = getopt_long(argc, argv, "mh", long_options, &option_index);
+    int c = getopt_long(argc, argv, "m:h", long_options, &option_index);
     while (c != -1) {
         switch(c) {
             case 'm' :
-                modeName = optarg;
+                modeName = std::string(optarg);
                 mode_spec = true;
+                break;
             case 'h' :
                 std::cout << "help message";
                 return 0;

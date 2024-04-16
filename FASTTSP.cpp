@@ -1,10 +1,10 @@
-//1761414855B69983BD8035097EFBD312EB0527F0
+// 1761414855B69983BD8035097EFBD312EB0527F0
 
 #include "FASTTSP.h"
 
 using namespace std;
 
-//FASTTSP functions
+// FASTTSP functions
 /* FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) { //nearest neighbor heuristic
     unordered_set<Vertex> Q;
     for (auto datum : data) {Q.insert(datum);}
@@ -27,10 +27,14 @@ using namespace std;
         him = next;
     } root->reassign(prev);
 } */
-FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) { //nearest insertion heuristic
+FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0)
+{ // nearest insertion heuristic
     unordered_set<size_t> Q;
-    unordered_map<size_t, Node*> F;
-    for (size_t I = 0; I < data.size(); I++) {Q.insert(I);}
+    unordered_map<size_t, Node *> F;
+    for (size_t I = 0; I < data.size(); I++)
+    {
+        Q.insert(I);
+    }
     {
         auto vtx1 = data[0];
         auto vtx2 = data[1];
@@ -41,39 +45,49 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) { //nearest insertion h
         F.emplace(size_t(1), node2);
         root = node1;
     }
-    while (!Q.empty()) {
-        int c = 0;
-        Vertex to_add = {0,0,0}; //default
-        Node* before = nullptr;
-        for (auto elt : F) {
-            for (auto n : Q) {
+    while (!Q.empty())
+    {
+        uint64_t c = 0;
+        Vertex to_add = {0, 0, 0}; // default
+        Node *before = nullptr;
+        for (auto elt : F)
+        {
+            for (auto n : Q)
+            {
                 Vertex candidate = data[n];
-                int can_dist = candidate.pow_dist(data[elt.first]);
-                if (c == 0 || can_dist < c) {
+                uint64_t can_dist = candidate.pow_dist(data[elt.first]);
+                if (c == 0 || can_dist < c)
+                {
                     to_add = candidate;
                     c = can_dist;
                     before = elt.second;
-                } 
+                }
             }
-        } total_C += before->insert_dist(to_add);
+        }
+        total_C += before->insert_dist(to_add);
         Q.erase(to_add.i);
         F.emplace(to_add.i, before->encorporate(to_add));
     }
 }
-int FASTTSP::Node::insert_dist (Vertex &elt) {
+uint64_t FASTTSP::Node::insert_dist(Vertex &elt)
+{
     return elt.insert_dist(vtx, E->vtx);
 }
-FASTTSP::Node* FASTTSP::Node::encorporate (Vertex &elt) {
-    Node* ptr = new Node (elt, elt.pow_dist(this->E->vtx), this->E);
+FASTTSP::Node *FASTTSP::Node::encorporate(Vertex &elt)
+{
+    Node *ptr = new Node(elt, elt.pow_dist(this->E->vtx), this->E);
     this->reassign(ptr);
     return ptr;
 }
-std::ostream& operator<<(std::ostream& os, const FASTTSP& elt) {
+std::ostream &operator<<(std::ostream &os, const FASTTSP &elt)
+{
     os << elt.total_C << endl;
-    FASTTSP::Node* current = elt.root;
-    while (current->next() != elt.root) {
+    FASTTSP::Node *current = elt.root;
+    while (current->next() != elt.root)
+    {
         os << current << ' ';
         current = current->next();
-    } return os;
+    }
+    return os;
 }
-//FASTTSP functions
+// FASTTSP functions

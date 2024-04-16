@@ -1,4 +1,4 @@
-//1761414855B69983BD8035097EFBD312EB0527F0
+// 1761414855B69983BD8035097EFBD312EB0527F0
 
 #ifndef FASTTSP_H
 #define FASTTSP_H
@@ -11,32 +11,41 @@
 #include <cmath>
 #include "vertex.h"
 
-class FASTTSP {
+class FASTTSP
+{
 public:
     FASTTSP(std::vector<Vertex> &data);
-    friend std::ostream& operator<<(std::ostream& os, const FASTTSP& elt);
+    friend std::ostream &operator<<(std::ostream &os, const FASTTSP &elt);
+
 private:
     class Node;
     Node *root;
-    int total_C;
+    uint64_t total_C;
 };
 
-class FASTTSP::Node {
-public: 
-    Node(Vertex vtx_in, int C_in) : vtx(vtx_in), C(C_in), E(nullptr) {}
-    Node(Vertex vtx_in, int C_in, Node* next) : vtx(vtx_in), C(C_in), E(next) {}
-    void reassign(Node* next) {E = next; C = vtx.pow_dist(next->vtx);}
-    int insert_dist (Vertex &elt);
-    Node* encorporate (Vertex &elt);
-    Node* next() {return this->E;}
-    friend std::ostream& operator<<(std::ostream& os, const Node& elt) {
+class FASTTSP::Node
+{
+public:
+    Node(Vertex vtx_in, uint64_t C_in) : vtx(vtx_in), C(C_in), E(nullptr) {}
+    Node(Vertex vtx_in, uint64_t C_in, Node *next) : vtx(vtx_in), C(C_in), E(next) {}
+    void reassign(Node *next)
+    {
+        E = next;
+        C = vtx.pow_dist(next->vtx);
+    }
+    uint64_t insert_dist(Vertex &elt);
+    Node *encorporate(Vertex &elt);
+    Node *next() { return this->E; }
+    friend std::ostream &operator<<(std::ostream &os, const Node &elt)
+    {
         os << elt.vtx.i;
         return os;
     }
+
 private:
     Vertex vtx;
-    int C;
-    FASTTSP::Node* E;
+    uint64_t C;
+    FASTTSP::Node *E;
 };
 
 #endif

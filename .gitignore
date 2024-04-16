@@ -20,3 +20,9 @@ sample-f-OPTTSP-out.txt
 spec-test-FASTTSP-out.txt
 spec-test-MST-out.txt
 spec-test-OPTTSP-out.txt
+.vscode/launch.json
+drone_valgrind.dSYM/Contents/Resources/DWARF/drone_valgrind
+my-sample-ab-MST-out.txt
+my-sample-c-MST-out.txt
+my-sample-d-MST-out.txt
+my-spec-test-MST-out.txt

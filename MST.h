@@ -1,4 +1,4 @@
-//1761414855B69983BD8035097EFBD312EB0527F0
+// 1761414855B69983BD8035097EFBD312EB0527F0
 
 #ifndef MST_H
 #define MST_H
@@ -11,45 +11,59 @@
 #include <cmath>
 #include "vertex.h"
 
-class MST {
+class MST
+{
 private:
     class Node;
     class NodeComp;
     double total_C;
-    std::deque<Node*> F;
+    std::deque<Node *> F;
+
 public:
     MST(std::vector<Vertex> &data);
-    double dist() {return sqrt(double(total_C));}
-    friend std::ostream& operator<<(std::ostream& os, const MST& elt);
-    std::vector<Vertex> out();
+    double dist() { return sqrt(double(total_C)); }
+    friend std::ostream &operator<<(std::ostream &os, const MST &elt);
 };
 
-class MST::Node {
+class MST::Node
+{
 public:
-    Node(Vertex &v_in, int C_in, Vertex E_in) : vtx(v_in), C(C_in), E(E_in) {}
-    int area() {return vtx.area();}
-    int pow_dist(Node &other) {return this->vtx.pow_dist(other.vtx);}
-    int pow_dist(Vertex &other) {return this->vtx.pow_dist(other);}
+    Node(Vertex &v_in, uint64_t C_in, Vertex E_in) : vtx(v_in), C(C_in), E(E_in) {}
+    int area() { return vtx.area(); }
+    uint64_t pow_dist(Node &other) { return this->vtx.pow_dist(other.vtx); }
+    uint64_t pow_dist(Vertex &other) { return this->vtx.pow_dist(other); }
     friend class MST;
     friend class NodeComp;
-    friend std::ostream& operator<<(std::ostream& os, const Node& elt) {
-        os << elt.vtx.i << ' ' << elt.E.i;
+    friend std::ostream &operator<<(std::ostream &os, const Node &elt)
+    {
+        if (elt.vtx.i < elt.E.i) {
+            os << elt.vtx.i << ' ' << elt.E.i;
+        } else os << elt.E.i << ' ' << elt.vtx.i;
         return os;
     }
+
 private:
     Vertex vtx;
-    int C;
+    uint64_t C;
     Vertex E;
 };
 
-class MST::NodeComp {
+class MST::NodeComp
+{
 public:
-    bool operator() (const Node &a, const Node &b) const {
-        if (a.C == b.C) return true;
-        else return (a.C < b.C);
-    } bool operator() (const Node* a, const Node* b) const {
-        if (a->C == b->C) return true;
-        else return (a->C < b->C);
+    bool operator()(const Node &a, const Node &b) const
+    {
+        if (a.C == b.C)
+            return true;
+        else
+            return (a.C > b.C);
+    }
+    bool operator()(const Node *a, const Node *b) const
+    {
+        if (a->C == b->C)
+            return true;
+        else
+            return (a->C > b->C);
     }
 };
 
