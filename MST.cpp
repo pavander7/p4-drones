@@ -65,6 +65,13 @@ std::ostream &operator<<(std::ostream &os, const MST &elt)
         os << *n << endl;
     return os;
 }
+MST::~MST() {
+    while (!F.empty()) {
+        auto temp = F.front();
+        F.pop_front();
+        delete temp;
+    }
+}
 // MST functions
 
 

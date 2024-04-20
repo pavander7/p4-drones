@@ -17,6 +17,7 @@ int main (int argc, char* argv[]) {
     std::cout.clear();
     cout << std::setprecision(2); //Always show 2 decimal places
     cout << std::fixed; //Disable scientific notation for large numbers
+    cerr << fixed << showpoint << setprecision(2) << boolalpha;
     string modeName;
     bool mode_spec = false;
 
@@ -85,7 +86,8 @@ int main (int argc, char* argv[]) {
             cout << graph;
             break;
         } case 'C' : {
-            cerr << "unimplemented\n";
+            OPTTSP graph(data);
+            cout << graph;
             break;
         }
     }

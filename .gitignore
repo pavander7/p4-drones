@@ -31,3 +31,6 @@ drone_valgrind.dSYM/Contents/Resources/DWARF/drone_valgrind
 drone_valgrind.dSYM/Contents/Resources/DWARF/drone_valgrind
 my-sample-c-FASTTSP-out.txt
 drone_valgrind
+my-sample-c-OPTTSP-out.txt
+out.txt
+err.txt

@@ -1,19 +1,32 @@
 // 1761414855B69983BD8035097EFBD312EB0527F0
 
 #include "OPTTSP.h"
+#include "iomanip"
+#include "MST.h"
+
+//https://www.geeksforgeeks.org/traveling-salesman-problem-using-branch-and-bound-2/
 
 using namespace std;
 
-/* template <typename T>
-void genPerms(vector<T> &path, size_t permLength)
+void OPTTSP::genPerms(vector<Vertex> &path, size_t permLength)
 {
+    //cerr << "genPerms on [";
+    bool first = true;
+    for (auto vtx : path) {
+        if (!first) cout << ", ";
+        else first = false;
+        cout << vtx.i;
+    } //cerr << "] with permLength " << permLength << endl;
     if (permLength == path.size())
     {
         // Do something with the path
+        double cost = calcPath(path);
+        if (cost < bestCost) bestPath = path;
         return;
     } // if ..complete path
 
-    if (!promising(path, permLength))
+    double curCost = 0;
+    if (!promising(path, permLength, curCost))
     {
         return;
     } // if ..not promising
@@ -26,30 +39,45 @@ void genPerms(vector<T> &path, size_t permLength)
     } // for ..unpermuted elements
 } // genPerms()
 
-template <typename T>
-bool promising(vector<T> &path, size_t permLength)
+bool OPTTSP::promising(vector<Vertex> &path, size_t permLength, double &lowerbound)
 {
+    //calculate lower bound
+    vector<Vertex> setPortion(path.begin(), path.begin() + int(permLength));
+    double setCost = 0;
+    if (!setPortion.empty()) calcPath(setPortion);
+    if (setCost > bestCost) {return false; cerr << "early abort.\n";}
+    else if (path.size() > permLength) {
+        vector<Vertex> unsetPortion(path.begin() + int(permLength), path.end());
+        OPTTSP::uMST mst(unsetPortion);
+        double mstCost = mst.dist();
+        lowerbound = setCost + mstCost;
+        for (size_t i = 0; i < path.size(); ++i)
+            cerr << setw(2) << path[i].i << ' ';
+        cerr << setw(4) << permLength << setw(10) << lowerbound;
+        // cerr << setw(10) << arm1Len << setw(10) << arm2Len;
+        cerr << setw(10) << mstCost << setw(10) << lowerbound << "  " << (lowerbound < bestCost) << '\n';
+        return (lowerbound < bestCost);
+    }
     return true;
 }
 
 // OPTTSP functions
-OPTTSP::OPTTSP(std::vector<Vertex> &data) : total_C(0)
+OPTTSP::OPTTSP(std::vector<Vertex> &data) : rawData(data), bestPath(data), bestCost(calcPath(data))
 {
-    unordered_set<size_t> Q;
-    unordered_map<size_t, Node *> F;
-    for (size_t I = 0; I < data.size(); I++)
-    {
-        Q.insert(I);
-    }
-    {
-        auto vtx1 = data[0];
-        auto vtx2 = data[1];
-        auto node1 = new Node(vtx1, vtx1.pow_dist(vtx2));
-        auto node2 = new Node(vtx2, vtx2.pow_dist(vtx1), node1);
-        node1->reassign(node2);
-        F.emplace(size_t(0), node1);
-        F.emplace(size_t(1), node2);
-        root = node1;
-    }
+    genPerms(rawData, size_t(0));
 }
-// OPTTSP functions */
+double OPTTSP::calcPath(std::vector<Vertex> &path) {
+    double cost = 0;
+    for (size_t n = 0; n < path.size(); n++) {
+        size_t m = (n + size_t(1)) % path.size();
+        cost += sqrt(path[n].pow_dist(path[m]));
+    } return cost;
+}
+ostream &operator<<(std::ostream &os, const OPTTSP &elt) {
+    os << elt.bestCost << endl;
+    for (auto vtx : elt.bestPath) {
+        os << vtx.i << ' ';
+    } os << endl;
+    return os;
+}
+// OPTTSP functions

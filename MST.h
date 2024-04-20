@@ -18,11 +18,12 @@ private:
     class NodeComp;
     double total_C;
     std::deque<Node *> F;
-
 public:
     MST(std::vector<Vertex> &data);
     double dist() { return sqrt(double(total_C)); }
     friend std::ostream &operator<<(std::ostream &os, const MST &elt);
+    virtual bool valid(Vertex v, Vertex w) {return (v.area() == 1 || w.area() == 1 || w.area() == v.area());}
+    ~MST();
 };
 
 class MST::Node

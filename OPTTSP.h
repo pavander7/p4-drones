@@ -9,43 +9,32 @@
 #include <unordered_set>
 #include <queue>
 #include <cmath>
+#include "MST.h"
 #include "vertex.h"
 
-/* class OPTTSP
+class OPTTSP
 {
 public:
     OPTTSP(std::vector<Vertex> &data);
     friend std::ostream &operator<<(std::ostream &os, const OPTTSP &elt);
 
 private:
-    uint64_t total_C;
-    class Node;
-    Node *root;
+    std::vector<Vertex> rawData;
+    std::vector<Vertex> bestPath;
+    double bestCost;
+    class uMST;
+
+    void genPerms(std::vector<Vertex> &path, std::size_t permLength);
+    bool promising(std::vector<Vertex> &path, std::size_t permLength, double &lowerbound);
+    double calcPath(std::vector<Vertex> &path);
+
 };
 
-class OPTTSP::Node
+class OPTTSP::uMST : public MST
 {
 public:
-    Node(Vertex vtx_in, uint64_t C_in) : vtx(vtx_in), C(C_in), E(nullptr) {}
-    Node(Vertex vtx_in, uint64_t C_in, Node *next) : vtx(vtx_in), C(C_in), E(next) {}
-    void reassign(Node *next)
-    {
-        E = next;
-        C = vtx.pow_dist(next->vtx);
-    }
-    uint64_t insert_dist(Vertex &elt);
-    Node *encorporate(Vertex &elt);
-    Node *next() { return this->E; }
-    friend std::ostream &operator<<(std::ostream &os, const Node &elt)
-    {
-        os << elt.vtx.i;
-        return os;
-    }
-
-private:
-    Vertex vtx;
-    uint64_t C;
-    OPTTSP::Node *E;
-}; */
+    uMST(std::vector<Vertex> &data) : MST(data) {}
+    bool valid(Vertex v, Vertex w) {return (v != w);}
+};
 
 #endif
