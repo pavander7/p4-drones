@@ -22,7 +22,7 @@ private:
     class fast_edge;
     double total_C;
     std::vector<fast_edge> finalPath;
-    void swapEdge(std::vector<fast_edge> &path, std::size_t x, std::size_t y);
+    void swapEdge(std::vector<fast_edge> &path, std::size_t x, std::size_t y, std::vector<Vertex> &data);
 };
 
 class FASTTSP::fast_node 

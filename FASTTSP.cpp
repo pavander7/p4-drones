@@ -147,13 +147,13 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
             //     << "Current: " << currCost << " Possible: " << possCost << '\n';
             if (possCost < currCost) { // if w(ac) + w(bd) < w(ab) + w(cd), swap
                 //cerr << "swap made.\n";
-                swapEdge(finalPath, x, y); // swaps ab...cd, including reversing path b..c
+                swapEdge(finalPath, x, y, data); // swaps ab...cd, including reversing path b..c
             }
         }
     }
 
     //cerr << "stage 3: report results\n";
-    for (auto ab : finalPath) total_C += sqrt(ab.cost()); // sums total cost of T by iterating through each edge
+    for (auto ab : finalPath) total_C += sqrt(ab.cost(data)); // sums total cost of T by iterating through each edge
 }
 
 FASTTSP::fast_node *FASTTSP::fast_node::encorporate(size_t i)
@@ -169,20 +169,20 @@ std::ostream &operator<<(std::ostream &os, const FASTTSP &elt)
     os << '\n';
     return os;
 }
-void FASTTSP::swapEdge(vector<fast_edge> &path, size_t x, size_t y) {
+void FASTTSP::swapEdge(vector<fast_edge> &path, size_t x, size_t y, std::vector<Vertex> &data) {
     // let xa...by define the path between x and y such that xa and by are edges, and ... is a valid subpath between a and b
     if (x == y) return; // if x = y, nothing left to swap
     size_t x_next = (x + size_t(1) % path.size()); // a
     size_t y_prev = size_t(int(y) - 1 + int(path.size())) % path.size(); // b
     // perform preliminary swap
-    Vertex temp_vtx = path[x].b;
-    path[x].b = path[y].a;
-    path[y].a = temp_vtx;
+    size_t temp_v_i = path[x].b_i;
+    path[x].b_i = path[y].a_i;
+    path[y].a_i = temp_v_i;
     if ((x == y_prev) || (y == x_next)) return; // if x and y are consecutive, swap needn't be "passed", path is complete
     else { // "pass" swap to next par of edges
-        path[x_next].a = path[x].b; 
-        path[y_prev].b = path[y].a;
-        swapEdge(path, x_next, y_prev); // recursively call swapEdge to reverse remaining inner path "..."
+        path[x_next].a_i = path[x].b_i; 
+        path[y_prev].b_i = path[y].a_i;
+        swapEdge(path, x_next, y_prev, data); // recursively call swapEdge to reverse remaining inner path "..."
     }
 }
 // FASTTSP functions
