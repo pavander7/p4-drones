@@ -12,7 +12,7 @@
 #include "MST.h"
 #include "vertex.h"
 
-class OPTTSP
+class OPTTSP 
 {
 public:
     explicit OPTTSP(std::vector<Vertex> &data);
@@ -29,7 +29,7 @@ private:
     double calcPath(std::vector<Vertex> &path);
 };
 
-class OPTTSP::uMST : public MST
+class OPTTSP::uMST : public MST 
 {
 public:
     explicit uMST(std::vector<Vertex> &data) : MST(data, false) {}

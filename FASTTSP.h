@@ -11,7 +11,7 @@
 #include <cmath>
 #include "vertex.h"
 
-class FASTTSP
+class FASTTSP 
 {
 public:
     explicit FASTTSP(std::vector<Vertex> &data);
@@ -25,7 +25,7 @@ private:
     void swapEdge(std::vector<Edge> &path, std::size_t x, std::size_t y);
 };
 
-class FASTTSP::fNode
+class FASTTSP::fNode 
 {
 public:
     fNode(Vertex vtx_in, uint64_t C_in) : vtx(vtx_in), C(C_in), E(nullptr), prev(nullptr) {}
@@ -55,7 +55,8 @@ private:
     FASTTSP::fNode *prev;
 };
 
-class FASTTSP::Edge {
+class FASTTSP::Edge 
+{
 public:
     Edge(Vertex &a_in, Vertex &b_in) : a(a_in), b(b_in) {}
     friend class FASTTSP;

@@ -47,8 +47,7 @@ MST::MST(vector<Vertex> &data, bool restrict_in) : restrict(restrict_in)
                 if (this->valid(her->E,w))
                 {
                     mNode *W = new mNode(her->E, her->E.pow_dist(w), w);
-                    //if ((poss.count(n) != 0) && (poss[n]->C > W->C)) poss[n] = W;
-                    if (poss.count(n) == 0) poss.emplace(n, W);
+                    if (poss[n]->C > W->C) poss.emplace(n, W);
                 }
             }
         }

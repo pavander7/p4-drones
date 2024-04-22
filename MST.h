@@ -27,7 +27,7 @@ private:
     std::deque<mNode *> F;
 };
 
-class MST::mNode
+class MST::mNode 
 {
 public:
     mNode(Vertex &v_in, uint64_t C_in, Vertex E_in) : vtx(v_in), C(C_in), E(E_in) {}
@@ -51,7 +51,7 @@ private:
     Vertex E;
 };
 
-class MST::NodeComp
+class MST::NodeComp 
 {
 public:
     bool operator()(const mNode &a, const mNode &b) const

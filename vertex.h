@@ -6,7 +6,7 @@
 #include <iostream>
 #include <cmath>
 
-struct Vertex
+struct Vertex 
 {
     int x, y;
     size_t i;
@@ -17,7 +17,7 @@ struct Vertex
     uint64_t pow_dist(Vertex const &other) const;
 };
 
-struct VertexComp
+struct VertexComp 
 {
     bool operator()(const Vertex &a, const Vertex &b) const;
 };
