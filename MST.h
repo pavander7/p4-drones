@@ -11,7 +11,7 @@
 #include <cmath>
 #include "vertex.h"
 
-class MST
+class MST 
 {
 public:
     class mNode;
