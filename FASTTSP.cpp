@@ -158,7 +158,7 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
     for (auto ab : finalPath) total_C += sqrt(ab.cost()); // sums total cost of T by iterating through each edge
 }
 
-FASTTSP::fNode *FASTTSP::fNode::encorporate(Vertex &elt)
+FASTTSP::fNode *FASTTSP::fNode::encorporate(const Vertex &elt)
 {
     fNode *ptr = new fNode(elt, elt.pow_dist(this->E->vtx), this->E); // construct xb
     this->reassign(ptr); // change ab to ax

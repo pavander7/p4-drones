@@ -9,7 +9,7 @@
 struct Vertex
 {
     int x, y;
-    std::size_t i;
+    size_t i;
     int area();
     bool operator==(Vertex const &other) const;
     bool operator!=(Vertex const &other) const;

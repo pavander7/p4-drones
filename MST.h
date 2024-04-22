@@ -32,8 +32,8 @@ class MST::mNode
 public:
     mNode(Vertex &v_in, uint64_t C_in, Vertex E_in) : vtx(v_in), C(C_in), E(E_in) {}
     int area() { return vtx.area(); }
-    uint64_t pow_dist(mNode &other) { return this->vtx.pow_dist(other.vtx); }
-    uint64_t pow_dist(Vertex &other) { return this->vtx.pow_dist(other); }
+    uint64_t pow_dist(const mNode &other) { return this->vtx.pow_dist(other.vtx); }
+    uint64_t pow_dist(const Vertex &other) { return this->vtx.pow_dist(other); }
     uint64_t cost() {return C;}
     friend class MST;
     friend class NodeComp;

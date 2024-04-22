@@ -39,7 +39,7 @@ public:
     /* std::uint64_t swap_cost(Node* other); */
     /* void twoopt(Node* other); */
     uint64_t dist() const {return vtx.pow_dist(E->vtx);}
-    fNode *encorporate(Vertex &elt);
+    fNode *encorporate(const Vertex &elt);
     fNode *next() { return this->E; }
     friend class FASTTSP;
     friend std::ostream &operator<<(std::ostream &os, const fNode &elt)
