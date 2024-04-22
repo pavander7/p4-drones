@@ -4,8 +4,8 @@
 
 using namespace std;
 
-bool Vertex::operator==(Vertex const &other) const { return (this->i == other.i); }
-bool Vertex::operator!=(Vertex const &other) const { return (this->i != other.i); }
+bool Vertex::operator==(Vertex const &other) const { return ((this->x == other.x) && (this->y == other.y)); }
+bool Vertex::operator!=(Vertex const &other) const { return ((this->x != other.x) || (this->y != other.y)); }
 int Vertex::area()
 {
     if (x < 0 && y < 0)
@@ -26,7 +26,7 @@ uint64_t Vertex::pow_dist(Vertex const &other) const
 }
 bool Vertex::operator<(Vertex const &other) const
 {
-    if (this->i == other.i)
+    if ((this->x == other.x) && (this->y == other.y))
         return true;
     else if (this->x == other.x)
     {
@@ -40,7 +40,7 @@ bool Vertex::operator<(Vertex const &other) const
 }
 bool VertexComp::operator()(const Vertex &a, const Vertex &b) const
 {
-    if (a.i == b.i)
+    if (a == b)
         return true;
     else if (a.x == b.x)
     {

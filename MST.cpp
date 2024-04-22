@@ -11,50 +11,47 @@ MST::MST(vector<Vertex> &data, bool restrict_in) : restrict(restrict_in)
     //priority_queue<mst_edge *, vector<mst_edge *>, NodeComp> poss;
     unordered_map<size_t, size_t> poss;
     total_C = 0;
-    for (size_t I = 0; I < data.size(); I++)
+    for (size_t I = 1; I < data.size(); I++)
     {
-        Q.emplace(data[I].i, data[I]);
+        Q.emplace(I, data[I]);
     }
     Vertex v = data.front();
-    Q.erase(v.i);
     for (auto [w_i, w] : Q)
     {
         //Vertex w = data[w_i];
         if (this->valid(v,w))
         {
-            mst_edge *W = new mst_edge(v.i, w_i);
-            poss.emplace(w_i, W);
+            poss.emplace(w_i, 0);
         }
     }
     while (!Q.empty())
     {
         NodeComp comp(data);
-        priority_queue<mst_edge, vector<mst_edge>, NodeComp> opts(comp);
+        priority_queue<mst_edge*, vector<mst_edge*>, NodeComp> opts(comp);
         for (auto [key, elt] : poss) {
-            mst_edge e(key, elt);
+            mst_edge* e = new mst_edge(elt, key);
             opts.push(e);
         }
         if (opts.empty()) {
             cerr << "Cannot construct MST";
             exit(1);
         }
-        mst_edge her = opts.top();
-        poss.erase(her.b);
-        //if (Q.count(her->b.i) != 0)
+        mst_edge* her = opts.top();
+        poss.erase(her->b);
         {
-            Q.erase(her.b);
+            Q.erase(her->b);
             F.push_back(her);
-            total_C += sqrt(her.cost(data));
+            total_C += sqrt(her->cost(data));
             for (auto [w_i, w] : Q)
             {
                 //Vertex w = data[w_i];
-                if (this->valid(her.vtx_b(data),w))
+                if (this->valid(her->vtx_b(data),w))
                 {
-                    if (poss.count(w_i) == 0) poss.emplace(w_i, her.b);
+                    if (poss.count(w_i) == 0) poss.emplace(w_i, her->b);
                     else {
                         mst_edge incumbent(poss[w_i], w_i);
-                        mst_edge proposed(her.b, w_i);
-                        if (incumbent.cost(data) > proposed.cost(data)) poss[w_i] = her.b;
+                        mst_edge proposed(her->b, w_i);
+                        if (incumbent.cost(data) > proposed.cost(data)) poss[w_i] = her->b;
                     }
                 }
             }
@@ -65,12 +62,19 @@ std::ostream &operator<<(std::ostream &os, const MST &elt)
 {
     os << elt.total_C << endl;
     for (auto n : elt.F)
-        os << n << endl;
+        os << *n << endl;
     return os;
 }
 bool MST::valid(Vertex v, Vertex w) {
     if (restrict) return (v.area() == 1 || w.area() == 1 || w.area() == v.area());
     else return true;
+}
+MST::~MST() {
+    while (!F.empty()) {
+        auto hold = F.front();
+        F.pop_front();
+        delete hold;
+    }
 }
 // MST functions
 

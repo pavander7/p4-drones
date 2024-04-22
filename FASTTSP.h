@@ -37,7 +37,7 @@ public:
     }
     Vertex vtx(std::vector<Vertex> &data) const {return data[v_i];}
     uint64_t dist(std::vector<Vertex> &data) const {return vtx(data).pow_dist(E->vtx(data));}
-    fast_node *encorporate(size_t i, std::vector<Vertex> &data);
+    fast_node *encorporate(size_t i);
     fast_node *next() { return this->E; }
     friend class FASTTSP;
     friend std::ostream &operator<<(std::ostream &os, const fast_node &elt)
@@ -55,14 +55,14 @@ private:
 class FASTTSP::fast_edge 
 {
 public:
-    fast_edge(Vertex &a_in, Vertex &b_in) : a(a_in), b(b_in) {}
-    fast_edge(const Vertex &a_in, const Vertex &b_in) : a(a_in), b(b_in) {}
+    fast_edge(size_t &a_in, size_t &b_in) : a_i(a_in), b_i(b_in) {}
+    fast_edge(const size_t &a_in, const size_t &b_in) : a_i(a_in), b_i(b_in) {}
     friend class FASTTSP;
-    size_t first() {return a.i;}
-    uint64_t cost() {return a.pow_dist(b);}
+    size_t first() {return a_i;}
+    uint64_t cost(std::vector<Vertex> &data) {return data[a_i].pow_dist(data[b_i]);}
 private:
-    Vertex a;
-    Vertex b;
+    size_t a_i;
+    size_t b_i;
 };
 
 #endif

@@ -112,7 +112,7 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
         //cerr << "1.3.3: execute best insertion c\n";
         if (to_add < data.size()) { // only execute if c is defined
             Q.erase(to_add); // remove c_x from Q
-            F.emplace(to_add, before->encorporate(to_add, data)); // encorporate performs the insertion, adds the resulting node to F
+            F.emplace(to_add, before->encorporate(to_add)); // encorporate performs the insertion, adds the resulting node to F
             numNodes++; // updates node count
         } 
     } 
@@ -123,8 +123,8 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
     fast_node* current = root; // pointer to act as iterator on DLL
     while (numNodes != 0) { // exectutes deletion exactly as many times as construction
         fast_edge *currEdge = nullptr; // ab defined dynamically to account for special case
-        if (numNodes == 1) currEdge = new fast_edge(current->vtx(data), finalPath[0].a); // special case: accounts for loop
-        else currEdge = new fast_edge(current->vtx(data), current->E->vtx(data)); // default case
+        if (numNodes == 1) currEdge = new fast_edge(current->v_i, finalPath[0].a_i); // special case: accounts for loop
+        else currEdge = new fast_edge(current->v_i, current->E->v_i); // default case
         this->finalPath.push_back(*currEdge); // adds ab to new representation of T
         fast_node* temp = current; // pop node
         current = current->next(); // current++
@@ -141,8 +141,8 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
         for (size_t y = x + size_t(2); y < finalPath.size(); y++) {
             //cerr << "2.3.1: indentify second candidate edge cd\n";
             fast_edge Y = finalPath[y];
-            double currCost = sqrt(X.cost()) + sqrt(Y.cost()); // w(ab) + w(cd)
-            double possCost = sqrt(X.a.pow_dist(Y.a)) + sqrt(X.b.pow_dist(Y.b)); // w(ac) + w(bd)
+            double currCost = sqrt(X.cost(data)) + sqrt(Y.cost(data)); // w(ab) + w(cd)
+            double possCost = sqrt(data[X.a_i].pow_dist(data[Y.a_i])) + sqrt(data[X.b_i].pow_dist(data[Y.b_i])); // w(ac) + w(bd)
             //cerr << "swap on (" << X.a.i << ", " << X.b.i << ") and (" << Y.a.i << ", " << Y.b.i << "): "
             //     << "Current: " << currCost << " Possible: " << possCost << '\n';
             if (possCost < currCost) { // if w(ac) + w(bd) < w(ab) + w(cd), swap
@@ -156,7 +156,7 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
     for (auto ab : finalPath) total_C += sqrt(ab.cost()); // sums total cost of T by iterating through each edge
 }
 
-FASTTSP::fast_node *FASTTSP::fast_node::encorporate(size_t i, std::vector<Vertex> &data)
+FASTTSP::fast_node *FASTTSP::fast_node::encorporate(size_t i)
 {
     fast_node *ptr = new fast_node(i, this->E); // construct xb
     this->reassign(ptr); // change ab to ax

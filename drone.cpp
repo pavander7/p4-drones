@@ -73,7 +73,7 @@ int main (int argc, char* argv[]) {
     for (size_t n = 0; n < N; n++) {
         int x, y;
         cin >> x >> y;
-        data.push_back(Vertex{x,y,n});
+        data.push_back(Vertex{x,y});
     }
 
     switch (mode) {

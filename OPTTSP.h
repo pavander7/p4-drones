@@ -19,14 +19,13 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const OPTTSP &elt);
 
 private:
-    std::vector<Vertex> rawData;
-    std::vector<Vertex> bestPath;
+    std::vector<size_t> bestPath;
     double bestCost;
     class uMST;
 
-    void genPerms(std::vector<Vertex> &path, std::size_t permLength);
-    bool promising(std::vector<Vertex> &path, std::size_t permLength);
-    double calcPath(std::vector<Vertex> &path);
+    void genPerms(std::vector<size_t> &path, std::size_t permLength, std::vector<Vertex> &data);
+    bool promising(std::vector<size_t> &path, std::size_t permLength, std::vector<Vertex> &data);
+    double calcPath(std::vector<size_t> &path, std::vector<Vertex> &data);
 };
 
 class OPTTSP::uMST : public MST 
