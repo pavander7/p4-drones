@@ -15,7 +15,7 @@ class MST
 {
 public:
     class mst_edge;
-    class mst_tree;
+    //class mst_tree;
     MST(std::vector<Vertex> &data, bool restrict_in);
     double dist() { return double(total_C); }
     friend std::ostream &operator<<(std::ostream &os, const MST &elt);
@@ -80,16 +80,16 @@ private:
     std::vector<Vertex>* const data;
 };
 
-class MST::mst_tree {
+/* class MST::mst_tree {
 public: 
     explicit mst_tree(size_t datum) {Q.insert(datum);}
-    void encorporate(mst_tree &other, mst_edge connection);
+    void encorporate(mst_tree &other, mst_edge* connection);
     bool connected(mst_edge &elt);
     friend class MST;
     bool contains(size_t i) {return (Q.count(i) != 0);}
 private:
-    std::vector<mst_edge> E;
+    std::vector<mst_edge*> E;
     std::unordered_set<size_t> Q;
-};
+}; */
 
 #endif

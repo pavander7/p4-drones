@@ -79,6 +79,7 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
     //cerr << "1.3: execute CIH\n";
     while (!Q.empty()) // true as long as there are unconnected points
     {
+        //cerr << "Remaining Vertices: " << Q.size() << '\n';
         //cerr << "1.3.1: define variables\n";
         double c = 0; // cost w(c) of best insertion c, where c is an insertion of the form ab -> axb, where a, b € T_v && x € Q
         size_t to_add = data.size(); // best vertex c_x to include (initialized to arbitrary default value)
@@ -99,6 +100,9 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
                 double right_leg = sqrt(candidate.pow_dist(elt.second->E->vtx(data))); // w(xb)
                 double curr_dist = sqrt(elt.second->vtx(data).pow_dist(elt.second->E->vtx(data))); // w(ab)
                 double can_dist = (left_leg + right_leg) - curr_dist; // w(axb) == w(ax) + w(xb) - w(ab): increase to total cost of the path if x is inserted between a & b
+                
+                //uint64_t can_dist = candidate.pow_dist(elt.second->vtx(data));
+
                 //cerr << "1.3.3.1: evaluate insertion (ab -> axb)\n";
                 if (c == 0 || can_dist < c) // if w(c) == 0, c is undefined
                 {                           // if (w(axb) < c), c should be disregarded in favor of axb
@@ -150,6 +154,7 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
                 swapEdge(finalPath, x, y, data); // swaps ab...cd, including reversing path b..c
             }
         }
+        //cerr << (x + size_t(1)) << " edges processed.\n";
     }
 
     //cerr << "stage 3: report results\n";
@@ -185,4 +190,10 @@ void FASTTSP::swapEdge(vector<fast_edge> &path, size_t x, size_t y, std::vector<
         swapEdge(path, x_next, y_prev, data); // recursively call swapEdge to reverse remaining inner path "..."
     }
 }
+/* std::vector<size_t> FASTTSP::givePath() const {
+    vector<size_t> goodPath;
+    goodPath.reserve(finalPath.size());
+    for (auto e : finalPath) goodPath.push_back(e.a_i);
+    return goodPath;
+} */
 // FASTTSP functions

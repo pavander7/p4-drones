@@ -25,7 +25,7 @@ void OPTTSP::genPerms(vector<size_t> &path, size_t permLength, std::vector<Verte
         if (cost < bestCost) {
             bestPath = path;
             bestCost = cost;
-            std::cerr << "New best cost acheived: " << bestCost << '\n';
+            //std::cerr << "New best cost acheived: " << bestCost << '\n';
         }
         return;
     } // if ..complete path
@@ -45,16 +45,26 @@ void OPTTSP::genPerms(vector<size_t> &path, size_t permLength, std::vector<Verte
 
 bool OPTTSP::promising(vector<size_t> &path, size_t permLength, std::vector<Vertex> &data)
 {
+    if (path.size() - permLength <= 4) return true;
     //calculate lower bound
     vector<size_t> setPortion(path.begin(), path.begin() + int(permLength));
     if (setPortion.empty() || permLength == size_t(0)) return true;
     double setCost = 0;
     for (size_t i = 0; i < setPortion.size() - size_t(1); i++) setCost += sqrt(data[setPortion[i]].pow_dist(data[setPortion[i+size_t(1)]]));
-    if (setCost > bestCost) {std::cerr << "early abort.\n"; return false;}
+    if (setCost > bestCost) {/* std::cerr << "early abort.\n"; */ return false;}
     if (path.size() > permLength) {
         vector<size_t> unsetPortion(path.begin() + int(permLength), path.end());
         //find minimum edges
         //special case: path[permLength]
+        double mstCost = 0;
+        {
+            vector<Vertex> vtxPath;
+            vtxPath.reserve(unsetPortion.size());
+            for (auto i : unsetPortion) vtxPath.push_back(data[i]);
+            uMST mst(vtxPath);
+            mstCost = mst.dist();
+        }
+        if ((setCost + mstCost) > bestCost) return false;
         double arm1Len = 0;
         double arm2Len = 0;
         {
@@ -69,20 +79,12 @@ bool OPTTSP::promising(vector<size_t> &path, size_t permLength, std::vector<Vert
             arm1Len = sqrt(arm1temp);
             arm2Len = sqrt(arm2temp);
         } 
-        double mstCost = 0;
-        {
-            vector<Vertex> vtxPath;
-            vtxPath.reserve(unsetPortion.size());
-            for (auto i : unsetPortion) vtxPath.push_back(data[i]);
-            uMST mst(vtxPath);
-            mstCost = mst.dist();
-        }
         double lowerbound = setCost + arm1Len + arm2Len + mstCost;
-        for (size_t i = 0; i < path.size(); ++i)
+        /* for (size_t i = 0; i < path.size(); ++i)
             std::cerr << setw(2) << path[i] << ' ';
         std::cerr << setw(4) << permLength << setw(10) << setCost;
         std::cerr << setw(10) << arm1Len << setw(10) << arm2Len;
-        std::cerr << setw(10) << mstCost << setw(10) << lowerbound << "  " << (lowerbound < bestCost) << '\n';
+        std::cerr << setw(10) << mstCost << setw(10) << lowerbound << "  " << (lowerbound < bestCost) << '\n'; */
         return (lowerbound < bestCost);
     }
     return true;
@@ -91,17 +93,19 @@ bool OPTTSP::promising(vector<size_t> &path, size_t permLength, std::vector<Vert
 // OPTTSP functions
 OPTTSP::OPTTSP(std::vector<Vertex> &data)
 {
+    bestPath.resize(data.size());
     {
         FASTTSP estGraph(data);
         bestCost = estGraph.cost();
+        //bestPath = estGraph.givePath();
     }
-    std::cerr << "Best path length = " << bestCost << '\n';
-    bestPath.resize(data.size());
+    //std::cerr << "Best path length = " << bestCost << '\n';
     for (size_t n = 0; n < data.size(); n++) bestPath[n] = n;
-    std::cerr << "Current path =";
+    /* std::cerr << "Current path =";
     for (auto her : bestPath) std::cerr << ' ' << her;
-    std::cerr << "\n\n" << "Path                               PL   curCost     arm 1     arm 2       MST     Total  Promising?\n";
-    genPerms(bestPath, size_t(1), data);
+    std::cerr << "\n\n" << "Path                               PL   curCost     arm 1     arm 2       MST     Total  Promising?\n"; */
+    auto currPath = bestPath;
+    genPerms(currPath, size_t(1), data);
 }
 double OPTTSP::calcPath(std::vector<size_t> &path, std::vector<Vertex> &data) {
     double cost = 0;

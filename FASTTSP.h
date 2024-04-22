@@ -17,6 +17,7 @@ public:
     explicit FASTTSP(std::vector<Vertex> &data);
     friend std::ostream &operator<<(std::ostream &os, const FASTTSP &elt);
     double cost() {return total_C;}
+    //std::vector<size_t> givePath() const;
 private:
     class fast_node;
     class fast_edge;
