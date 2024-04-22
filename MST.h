@@ -14,7 +14,7 @@
 class MST 
 {
 public:
-    class mNode;
+    class mst_edge;
     MST(std::vector<Vertex> &data, bool restrict_in);
     double dist() { return double(total_C); }
     friend std::ostream &operator<<(std::ostream &os, const MST &elt);
@@ -24,50 +24,58 @@ private:
     class NodeComp;
     double total_C;
     bool restrict;
-    std::deque<mNode *> F;
+    std::deque<mst_edge *> F;
 };
 
-class MST::mNode 
+class MST::mst_edge 
 {
 public:
-    mNode(Vertex &v_in, uint64_t C_in, Vertex E_in) : vtx(v_in), C(C_in), E(E_in) {}
-    int area() { return vtx.area(); }
-    uint64_t pow_dist(const mNode &other) { return this->vtx.pow_dist(other.vtx); }
-    uint64_t pow_dist(const Vertex &other) { return this->vtx.pow_dist(other); }
-    uint64_t cost() {return C;}
+    mst_edge(size_t a_in, size_t b_in) : a(a_in), b(b_in) {}
+    int area(std::vector<Vertex> &data) { return vtx_a(data).area(); }
+    //uint64_t pow_dist(const mst_edge &other, const std::vector<Vertex> &data) { return this->vtx_a(data).pow_dist(other.vtx_a(data)); }
+    uint64_t pow_dist(size_t other, const std::vector<Vertex> &data) { return this->vtx_a(data).pow_dist(data[other]); }
+    uint64_t cost(const std::vector<Vertex> &data) const {return vtx_a(data).pow_dist(vtx_b(data));}
+    Vertex vtx_a(const std::vector<Vertex> &data) const {return data[a];}
+    Vertex vtx_b(const std::vector<Vertex> &data) const {return data[b];}
     friend class MST;
     friend class NodeComp;
-    friend std::ostream &operator<<(std::ostream &os, const mNode &elt)
+    friend std::ostream &operator<<(std::ostream &os, const mst_edge &elt)
     {
-        if (elt.vtx.i < elt.E.i) {
-            os << elt.vtx.i << ' ' << elt.E.i;
-        } else os << elt.E.i << ' ' << elt.vtx.i;
+        if (elt.a < elt.b) {
+            os << elt.a << ' ' << elt.b;
+        } else os << elt.b << ' ' << elt.a;
         return os;
     }
 
 private:
-    Vertex vtx;
-    uint64_t C;
-    Vertex E;
+    size_t a;
+    size_t b;
 };
 
 class MST::NodeComp 
 {
 public:
-    bool operator()(const mNode &a, const mNode &b) const
+    NodeComp(std::vector<Vertex> &data_in) : data (&data_in) {}
+    bool operator()(const mst_edge &a, const mst_edge &b) const
     {
-        if (a.C == b.C)
+        auto a_c = a.cost(*data);
+        auto b_c = b.cost(*data);
+        if (a_c == b_c)
             return true;
         else
-            return (a.C > b.C);
+            return (a_c > b_c);
     }
-    bool operator()(const mNode *a, const mNode *b) const
+    bool operator()(const mst_edge *a, const mst_edge *b) const
     {
-        if (a->C == b->C)
+        auto a_c = a->cost(*data);
+        auto b_c = b->cost(*data);
+        if (a_c == b_c)
             return true;
         else
-            return (a->C > b->C);
+            return (a_c > b_c);
     }
+private:
+    std::vector<Vertex>* const data;
 };
 
 #endif

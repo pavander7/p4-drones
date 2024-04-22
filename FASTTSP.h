@@ -18,47 +18,45 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const FASTTSP &elt);
     double cost() {return total_C;}
 private:
-    class fNode;
-    class Edge;
+    class fast_node;
+    class fast_edge;
     double total_C;
-    std::vector<Edge> finalPath;
-    void swapEdge(std::vector<Edge> &path, std::size_t x, std::size_t y);
+    std::vector<fast_edge> finalPath;
+    void swapEdge(std::vector<fast_edge> &path, std::size_t x, std::size_t y);
 };
 
-class FASTTSP::fNode 
+class FASTTSP::fast_node 
 {
 public:
-    fNode(Vertex vtx_in, uint64_t C_in) : vtx(vtx_in), C(C_in), E(nullptr), prev(nullptr) {}
-    fNode(Vertex vtx_in, uint64_t C_in, fNode *next) : vtx(vtx_in), C(C_in), E(next), prev(nullptr) {next->prev = this;}
-    void reassign(fNode *next)
+    explicit fast_node(size_t vtx_in) : v_i(vtx_in), E(nullptr), prev(nullptr) {}
+    fast_node(size_t vtx_in, fast_node *next) : v_i(vtx_in), E(next), prev(nullptr) {next->prev = this;}
+    void reassign(fast_node *next)
     {
         E = next;
         next->prev = E;
-        C = vtx.pow_dist(next->vtx);
     }
-    /* std::uint64_t swap_cost(Node* other); */
-    /* void twoopt(Node* other); */
-    uint64_t dist() const {return vtx.pow_dist(E->vtx);}
-    fNode *encorporate(const Vertex &elt);
-    fNode *next() { return this->E; }
+    Vertex vtx(std::vector<Vertex> &data) const {return data[v_i];}
+    uint64_t dist(std::vector<Vertex> &data) const {return vtx(data).pow_dist(E->vtx(data));}
+    fast_node *encorporate(size_t i, std::vector<Vertex> &data);
+    fast_node *next() { return this->E; }
     friend class FASTTSP;
-    friend std::ostream &operator<<(std::ostream &os, const fNode &elt)
+    friend std::ostream &operator<<(std::ostream &os, const fast_node &elt)
     {
-        os << elt.vtx.i;
+        os << elt.v_i;
         return os;
     }
 
 private:
-    Vertex vtx;
-    uint64_t C;
-    FASTTSP::fNode *E;
-    FASTTSP::fNode *prev;
+    size_t v_i;
+    FASTTSP::fast_node *E;
+    FASTTSP::fast_node *prev;
 };
 
-class FASTTSP::Edge 
+class FASTTSP::fast_edge 
 {
 public:
-    Edge(Vertex &a_in, Vertex &b_in) : a(a_in), b(b_in) {}
+    fast_edge(Vertex &a_in, Vertex &b_in) : a(a_in), b(b_in) {}
+    fast_edge(const Vertex &a_in, const Vertex &b_in) : a(a_in), b(b_in) {}
     friend class FASTTSP;
     size_t first() {return a.i;}
     uint64_t cost() {return a.pow_dist(b);}

@@ -58,8 +58,8 @@ bool OPTTSP::promising(vector<Vertex> &path, size_t permLength)
         double arm1Len = 0;
         double arm2Len = 0;
         {
-            double arm1temp = 0;
-            double arm2temp = 0;
+            uint64_t arm1temp = 0;
+            uint64_t arm2temp = 0;
             for (auto m : unsetPortion) {
                 uint64_t cost1 = path[0].pow_dist(m);
                 uint64_t cost2 = path[permLength - size_t(1)].pow_dist(m);
@@ -68,9 +68,12 @@ bool OPTTSP::promising(vector<Vertex> &path, size_t permLength)
             }
             arm1Len = sqrt(arm1temp);
             arm2Len = sqrt(arm2temp);
+        } 
+        double mstCost = 0;
+        {
+            uMST mst(unsetPortion);
+            mstCost = mst.dist();
         }
-        uMST mst(unsetPortion);
-        double mstCost = mst.dist();
         double lowerbound = setCost + arm1Len + arm2Len + mstCost;
         /* for (size_t i = 0; i < path.size(); ++i)
             std::cerr << setw(2) << path[i].i << ' ';

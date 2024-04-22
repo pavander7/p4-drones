@@ -8,8 +8,8 @@ using namespace std;
 MST::MST(vector<Vertex> &data, bool restrict_in) : restrict(restrict_in)
 {
     unordered_map<size_t, Vertex> Q;
-    //priority_queue<mNode *, vector<mNode *>, NodeComp> poss;
-    unordered_map<size_t, mNode*> poss;
+    //priority_queue<mst_edge *, vector<mst_edge *>, NodeComp> poss;
+    unordered_map<size_t, mst_edge*> poss;
     total_C = 0;
     for (size_t I = 0; I < data.size(); I++)
     {
@@ -22,32 +22,32 @@ MST::MST(vector<Vertex> &data, bool restrict_in) : restrict(restrict_in)
         //Vertex w = data[n];
         if (this->valid(v,w))
         {
-            mNode *W = new mNode(v, v.pow_dist(w), w);
+            mst_edge *W = new mst_edge(v, w);
             poss.emplace(n, W);
         }
     }
     while (!Q.empty())
     {
-        priority_queue<mNode *, vector<mNode *>, NodeComp> opts;
+        priority_queue<mst_edge *, vector<mst_edge *>, NodeComp> opts;
         for (auto [key, elt] : poss) {opts.push(elt);}
         if (opts.empty()) {
             cerr << "Cannot construct MST";
             exit(1);
         }
-        mNode *her = opts.top();
-        poss.erase(her->E.i);
-        //if (Q.count(her->E.i) != 0)
+        mst_edge *her = opts.top();
+        poss.erase(her->b.i);
+        //if (Q.count(her->b.i) != 0)
         {
-            Q.erase(her->E.i);
+            Q.erase(her->b.i);
             F.push_back(her);
-            total_C += sqrt(her->C);
+            total_C += sqrt(her->cost());
             for (auto [n, w] : Q)
             {
                 //Vertex w = data[n];
-                if (this->valid(her->E,w))
+                if (this->valid(her->b,w))
                 {
-                    mNode *W = new mNode(her->E, her->E.pow_dist(w), w);
-                    if ((poss.count(n) != 0) && (poss[n]->C > W->C)) poss[n] = W;
+                    mst_edge *W = new mst_edge(her->b, w);
+                    if ((poss.count(n) != 0) && (poss[n]->cost() > W->cost())) poss[n] = W;
                     else if (poss.count(n) == 0) poss.emplace(n, W);
                 }
             }
