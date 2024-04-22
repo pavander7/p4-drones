@@ -3,6 +3,7 @@
 #include "OPTTSP.h"
 #include "iomanip"
 #include "MST.h"
+#include "FASTTSP.h"
 
 //https://www.geeksforgeeks.org/traveling-salesman-problem-using-branch-and-bound-2/
 
@@ -10,23 +11,26 @@ using namespace std;
 
 void OPTTSP::genPerms(vector<Vertex> &path, size_t permLength)
 {
-    //cerr << "genPerms on [";
+    /* //cerr << "genPerms on [";
     bool first = true;
     for (auto vtx : path) {
         if (!first) cout << ", ";
         else first = false;
         cout << vtx.i;
-    } //cerr << "] with permLength " << permLength << endl;
+    } //cerr << "] with permLength " << permLength << endl; */
     if (permLength == path.size())
     {
         // Do something with the path
         double cost = calcPath(path);
-        if (cost < bestCost) bestPath = path;
+        if (cost < bestCost) {
+            bestPath = path;
+            bestCost = cost;
+            /* std::cerr << "New best cost acheived: " << bestCost << '\n'; */
+        }
         return;
     } // if ..complete path
 
-    double curCost = 0;
-    if (!promising(path, permLength, curCost))
+    if (!promising(path, permLength))
     {
         return;
     } // if ..not promising
@@ -39,32 +43,57 @@ void OPTTSP::genPerms(vector<Vertex> &path, size_t permLength)
     } // for ..unpermuted elements
 } // genPerms()
 
-bool OPTTSP::promising(vector<Vertex> &path, size_t permLength, double &lowerbound)
+bool OPTTSP::promising(vector<Vertex> &path, size_t permLength)
 {
     //calculate lower bound
     vector<Vertex> setPortion(path.begin(), path.begin() + int(permLength));
+    if (setPortion.empty() || permLength == size_t(0)) return true;
     double setCost = 0;
-    if (!setPortion.empty()) calcPath(setPortion);
-    if (setCost > bestCost) {return false; cerr << "early abort.\n";}
+    for (size_t i = 0; i < setPortion.size() - size_t(1); i++) setCost += sqrt(setPortion[i].pow_dist(setPortion[i+size_t(1)]));
+    if (setCost > bestCost) {/* std::cerr << "early abort.\n"; */ return false;}
     else if (path.size() > permLength) {
         vector<Vertex> unsetPortion(path.begin() + int(permLength), path.end());
-        OPTTSP::uMST mst(unsetPortion);
+        //find minimum edges
+        //special case: path[permLength]
+        double arm1Len = 0;
+        double arm2Len = 0;
+        {
+            double arm1temp = 0;
+            double arm2temp = 0;
+            for (auto m : unsetPortion) {
+                uint64_t cost1 = path[0].pow_dist(m);
+                uint64_t cost2 = path[permLength - size_t(1)].pow_dist(m);
+                if (arm1temp == 0 || cost1 < arm1temp) arm1temp = cost1;
+                if (arm2temp == 0 || cost2 < arm2temp) arm2temp = cost2;
+            }
+            arm1Len = sqrt(arm1temp);
+            arm2Len = sqrt(arm2temp);
+        }
+        uMST mst(unsetPortion);
         double mstCost = mst.dist();
-        lowerbound = setCost + mstCost;
-        for (size_t i = 0; i < path.size(); ++i)
-            cerr << setw(2) << path[i].i << ' ';
-        cerr << setw(4) << permLength << setw(10) << lowerbound;
-        // cerr << setw(10) << arm1Len << setw(10) << arm2Len;
-        cerr << setw(10) << mstCost << setw(10) << lowerbound << "  " << (lowerbound < bestCost) << '\n';
+        double lowerbound = setCost + arm1Len + arm2Len + mstCost;
+        /* for (size_t i = 0; i < path.size(); ++i)
+            std::cerr << setw(2) << path[i].i << ' ';
+        std::cerr << setw(4) << permLength << setw(10) << setCost;
+        std::cerr << setw(10) << arm1Len << setw(10) << arm2Len;
+        std::cerr << setw(10) << mstCost << setw(10) << lowerbound << "  " << (lowerbound < bestCost) << '\n'; */
         return (lowerbound < bestCost);
     }
     return true;
 }
 
 // OPTTSP functions
-OPTTSP::OPTTSP(std::vector<Vertex> &data) : rawData(data), bestPath(data), bestCost(calcPath(data))
+OPTTSP::OPTTSP(std::vector<Vertex> &data) : rawData(data), bestPath(data)
 {
-    genPerms(rawData, size_t(0));
+    {
+        FASTTSP estGraph(data);
+        bestCost = estGraph.cost();
+    }
+    //std::cerr << "Best path length = " << bestCost << '\n';
+    //std::cerr << "Current path =";
+    for (auto her : bestPath) std::cerr << ' ' << her.i;
+    //std::cerr << "\n\n" << "Path                               PL   curCost     arm 1     arm 2       MST     Total  Promising?\n";
+    genPerms(rawData, size_t(1));
 }
 double OPTTSP::calcPath(std::vector<Vertex> &path) {
     double cost = 0;

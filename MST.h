@@ -13,17 +13,18 @@
 
 class MST
 {
-private:
+public:
     class Node;
+    MST(std::vector<Vertex> &data, bool restrict_in);
+    double dist() { return double(total_C); }
+    friend std::ostream &operator<<(std::ostream &os, const MST &elt);
+    bool valid(Vertex v, Vertex w);
+    ~MST();
+private:
     class NodeComp;
     double total_C;
+    bool restrict;
     std::deque<Node *> F;
-public:
-    MST(std::vector<Vertex> &data);
-    double dist() { return sqrt(double(total_C)); }
-    friend std::ostream &operator<<(std::ostream &os, const MST &elt);
-    virtual bool valid(Vertex v, Vertex w) {return (v.area() == 1 || w.area() == 1 || w.area() == v.area());}
-    ~MST();
 };
 
 class MST::Node
@@ -33,6 +34,7 @@ public:
     int area() { return vtx.area(); }
     uint64_t pow_dist(Node &other) { return this->vtx.pow_dist(other.vtx); }
     uint64_t pow_dist(Vertex &other) { return this->vtx.pow_dist(other); }
+    uint64_t cost() {return C;}
     friend class MST;
     friend class NodeComp;
     friend std::ostream &operator<<(std::ostream &os, const Node &elt)

@@ -78,7 +78,7 @@ int main (int argc, char* argv[]) {
 
     switch (mode) {
         case 'A' : {
-            MST graph(data);
+            MST graph(data, true);
             cout << graph;
             break;
         } case 'B' : {

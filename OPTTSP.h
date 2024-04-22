@@ -15,7 +15,7 @@
 class OPTTSP
 {
 public:
-    OPTTSP(std::vector<Vertex> &data);
+    explicit OPTTSP(std::vector<Vertex> &data);
     friend std::ostream &operator<<(std::ostream &os, const OPTTSP &elt);
 
 private:
@@ -25,16 +25,14 @@ private:
     class uMST;
 
     void genPerms(std::vector<Vertex> &path, std::size_t permLength);
-    bool promising(std::vector<Vertex> &path, std::size_t permLength, double &lowerbound);
+    bool promising(std::vector<Vertex> &path, std::size_t permLength);
     double calcPath(std::vector<Vertex> &path);
-
 };
 
 class OPTTSP::uMST : public MST
 {
 public:
-    uMST(std::vector<Vertex> &data) : MST(data) {}
-    bool valid(Vertex v, Vertex w) {return (v != w);}
+    explicit uMST(std::vector<Vertex> &data) : MST(data, false) {}
 };
 
 #endif

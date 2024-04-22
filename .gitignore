@@ -34,3 +34,7 @@ drone_valgrind
 my-sample-c-OPTTSP-out.txt
 out.txt
 err.txt
+my-sample-e-OPTTSP-out.txt
+my-sample-ab-FASTTSP-out.txt
+my-sample-e-FASTTSP-out.txt
+fullsubmit.tar.gz

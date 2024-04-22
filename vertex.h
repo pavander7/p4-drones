@@ -15,7 +15,6 @@ struct Vertex
     bool operator!=(Vertex const &other) const;
     bool operator<(Vertex const &other) const;
     uint64_t pow_dist(Vertex const &other) const;
-    uint64_t insert_dist(Vertex const &before, Vertex const &after) const;
 };
 
 struct VertexComp

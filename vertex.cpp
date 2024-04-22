@@ -24,12 +24,6 @@ uint64_t Vertex::pow_dist(Vertex const &other) const
     uint64_t result = (X2 + Y2);
     return result;
 }
-uint64_t Vertex::insert_dist(Vertex const &before, Vertex const &after) const
-{
-    uint64_t dist1 = before.pow_dist(after);
-    uint64_t dist2 = this->pow_dist(before) + this->pow_dist(after);
-    return (dist2 - dist1);
-}
 bool Vertex::operator<(Vertex const &other) const
 {
     if (this->i == other.i)
