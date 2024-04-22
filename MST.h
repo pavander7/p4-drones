@@ -14,7 +14,7 @@
 class MST
 {
 public:
-    class Node;
+    class mNode;
     MST(std::vector<Vertex> &data, bool restrict_in);
     double dist() { return double(total_C); }
     friend std::ostream &operator<<(std::ostream &os, const MST &elt);
@@ -24,20 +24,20 @@ private:
     class NodeComp;
     double total_C;
     bool restrict;
-    std::deque<Node *> F;
+    std::deque<mNode *> F;
 };
 
-class MST::Node
+class MST::mNode
 {
 public:
-    Node(Vertex &v_in, uint64_t C_in, Vertex E_in) : vtx(v_in), C(C_in), E(E_in) {}
+    mNode(Vertex &v_in, uint64_t C_in, Vertex E_in) : vtx(v_in), C(C_in), E(E_in) {}
     int area() { return vtx.area(); }
-    uint64_t pow_dist(Node &other) { return this->vtx.pow_dist(other.vtx); }
+    uint64_t pow_dist(mNode &other) { return this->vtx.pow_dist(other.vtx); }
     uint64_t pow_dist(Vertex &other) { return this->vtx.pow_dist(other); }
     uint64_t cost() {return C;}
     friend class MST;
     friend class NodeComp;
-    friend std::ostream &operator<<(std::ostream &os, const Node &elt)
+    friend std::ostream &operator<<(std::ostream &os, const mNode &elt)
     {
         if (elt.vtx.i < elt.E.i) {
             os << elt.vtx.i << ' ' << elt.E.i;
@@ -54,14 +54,14 @@ private:
 class MST::NodeComp
 {
 public:
-    bool operator()(const Node &a, const Node &b) const
+    bool operator()(const mNode &a, const mNode &b) const
     {
         if (a.C == b.C)
             return true;
         else
             return (a.C > b.C);
     }
-    bool operator()(const Node *a, const Node *b) const
+    bool operator()(const mNode *a, const mNode *b) const
     {
         if (a->C == b->C)
             return true;

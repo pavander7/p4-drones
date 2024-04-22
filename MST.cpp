@@ -8,8 +8,8 @@ using namespace std;
 MST::MST(vector<Vertex> &data, bool restrict_in) : restrict(restrict_in)
 {
     unordered_map<size_t, Vertex> Q;
-    //priority_queue<Node *, vector<Node *>, NodeComp> poss;
-    unordered_map<size_t, Node*> poss;
+    //priority_queue<mNode *, vector<mNode *>, NodeComp> poss;
+    unordered_map<size_t, mNode*> poss;
     total_C = 0;
     for (size_t I = 0; I < data.size(); I++)
     {
@@ -22,19 +22,19 @@ MST::MST(vector<Vertex> &data, bool restrict_in) : restrict(restrict_in)
         //Vertex w = data[n];
         if (this->valid(v,w))
         {
-            Node *W = new Node(v, v.pow_dist(w), w);
+            mNode *W = new mNode(v, v.pow_dist(w), w);
             poss.emplace(n, W);
         }
     }
     while (!Q.empty())
     {
-        priority_queue<Node *, vector<Node *>, NodeComp> opts;
+        priority_queue<mNode *, vector<mNode *>, NodeComp> opts;
         for (auto [key, elt] : poss) {opts.push(elt);}
         if (opts.empty()) {
             cerr << "Cannot construct MST";
             exit(1);
         }
-        Node *her = opts.top();
+        mNode *her = opts.top();
         poss.erase(her->E.i);
         //if (Q.count(her->E.i) != 0)
         {
@@ -46,7 +46,7 @@ MST::MST(vector<Vertex> &data, bool restrict_in) : restrict(restrict_in)
                 //Vertex w = data[n];
                 if (this->valid(her->E,w))
                 {
-                    Node *W = new Node(her->E, her->E.pow_dist(w), w);
+                    mNode *W = new mNode(her->E, her->E.pow_dist(w), w);
                     if ((poss.count(n) != 0) && (poss[n]->C > W->C)) poss[n] = W;
                     else if (poss.count(n) == 0) poss.emplace(n, W);
                 }

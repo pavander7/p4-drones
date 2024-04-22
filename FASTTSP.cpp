@@ -7,11 +7,11 @@ using namespace std;
 // FASTTSP functions
 /* FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) { //nearest neighbor heuristic
     unordered_set<Vertex> Q;
-    Node* root;
+    fNode* root;
     size_t numNodes = 1;
     for (auto datum : data) {Q.insert(datum);}
     auto him = data.front();
-    Node* prev = nullptr;
+    fNode* prev = nullptr;
     while (!Q.empty()) {
         Q.erase(him);
         int c = 0;
@@ -21,7 +21,7 @@ using namespace std;
                 next = her;
                 c = him.pow_dist(her);
             }
-        } Node* temp = new Node(him, c);
+        } fNode* temp = new fNode(him, c);
         if (prev == nullptr) root = temp;
         else prev->reassign(temp);
         total_C += c;
@@ -51,21 +51,21 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
     //cerr << "stage 1: cheapest insertion heuristic (CIH)\n";
 
     //cerr << "1.1: import dataset\n";
-    unordered_map<size_t, Node *> F; // maps created nodes to their starting index for later random access, F.A. elt € F, elt € T_e
+    unordered_map<size_t, fNode *> F; // maps created nodes to their starting index for later random access, F.A. elt € F, elt € T_e
     unordered_set<size_t> Q; // Q = D - !T_v : set of the indices of all vertices not yet in DLL
     for (size_t I = 2; I < data.size(); I++) { Q.insert(I); } // add all vertices to Q, 0 & 1 are ommitted since they would be immediately removed in 1.2
 
     //cerr << "1.2: initialize DLL\n";
     //cerr << "1.2.1: initialize basic member variables\n";
-    Node* root; // constant time access pointer into DLL at arbitrary posiiton
+    fNode* root; // constant time access pointer into DLL at arbitrary posiiton
     size_t numNodes = 2; // tracks number of nodes, for later deconstruction, starts as 2
     {
         //cerr << "1.2.2: identify starting vertices\n";
         auto vtx1 = data[0]; // a
         auto vtx2 = data[1]; // b
         //cerr << "1.2.3: construct edges without pointers\n";
-        auto node1 = new Node(vtx1, vtx1.pow_dist(vtx2)); // ab
-        auto node2 = new Node(vtx2, vtx2.pow_dist(vtx1)); // ba
+        auto node1 = new fNode(vtx1, vtx1.pow_dist(vtx2)); // ab
+        auto node2 = new fNode(vtx2, vtx2.pow_dist(vtx1)); // ba
         //cerr << "1.2.4: connect edges by initializing pointers\n";
         node1->reassign(node2);
         node2->reassign(node1); 
@@ -82,7 +82,7 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
         //cerr << "1.3.1: define variables\n";
         double c = 0; // cost w(c) of best insertion c, where c is an insertion of the form ab -> axb, where a, b € T_v && x € Q
         Vertex to_add = {0, 0, 0}; // best vertex c_x to include (initialized to arbitrary default value)
-        Node *before = nullptr; // pointer to the edge c_ab that will be affected by insertion
+        fNode *before = nullptr; // pointer to the edge c_ab that will be affected by insertion
         bool foundValidOpt = false; // tracks whether a valid insertion has been found
 
         //cerr << "1.3.2: loop through every edge in DLL\n";
@@ -122,13 +122,13 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
     //cerr << "stage 2: 2-opt heuristic\n";
 
     //cerr << "2.1: convert T from DLL to vector\n";
-    Node* current = root; // pointer to act as iterator on DLL
+    fNode* current = root; // pointer to act as iterator on DLL
     while (numNodes != 0) { // exectutes deletion exactly as many times as construction
         Edge *currEdge = nullptr; // ab defined dynamically to account for special case
         if (numNodes == 1) currEdge = new Edge(current->vtx, finalPath[0].a); // special case: accounts for loop
         else currEdge = new Edge(current->vtx, current->E->vtx); // default case
         this->finalPath.push_back(*currEdge); // adds ab to new representation of T
-        Node* temp = current; // pop node
+        fNode* temp = current; // pop node
         current = current->next(); // current++
         delete temp; // delete now useless node
         delete currEdge; // delete dynamically allocated edge
@@ -158,9 +158,9 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
     for (auto ab : finalPath) total_C += sqrt(ab.cost()); // sums total cost of T by iterating through each edge
 }
 
-FASTTSP::Node *FASTTSP::Node::encorporate(Vertex &elt)
+FASTTSP::fNode *FASTTSP::fNode::encorporate(Vertex &elt)
 {
-    Node *ptr = new Node(elt, elt.pow_dist(this->E->vtx), this->E); // construct xb
+    fNode *ptr = new fNode(elt, elt.pow_dist(this->E->vtx), this->E); // construct xb
     this->reassign(ptr); // change ab to ax
     return ptr;
 }
