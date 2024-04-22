@@ -73,7 +73,7 @@ bool OPTTSP::promising(vector<size_t> &path, size_t permLength, std::vector<Vert
         {
             vector<Vertex> vtxPath;
             vtxPath.reserve(unsetPortion.size());
-            for (auto i : path) vtxPath.push_back(data[i]);
+            for (auto i : unsetPortion) vtxPath.push_back(data[i]);
             uMST mst(vtxPath);
             mstCost = mst.dist();
         }
