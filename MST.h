@@ -19,12 +19,12 @@ public:
     double dist() { return double(total_C); }
     friend std::ostream &operator<<(std::ostream &os, const MST &elt);
     bool valid(Vertex v, Vertex w);
-    ~MST();
+    bool valid(size_t v, size_t w, std::vector<Vertex> data) {return valid(data[v], data[w]);}
 private:
     class NodeComp;
     double total_C;
     bool restrict;
-    std::deque<mst_edge *> F;
+    std::deque<mst_edge> F;
 };
 
 class MST::mst_edge 
@@ -55,7 +55,7 @@ private:
 class MST::NodeComp 
 {
 public:
-    NodeComp(std::vector<Vertex> &data_in) : data (&data_in) {}
+    explicit NodeComp(std::vector<Vertex> &data_in) : data (&data_in) {}
     bool operator()(const mst_edge &a, const mst_edge &b) const
     {
         auto a_c = a.cost(*data);
