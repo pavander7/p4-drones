@@ -90,10 +90,10 @@ OPTTSP::OPTTSP(const std::vector<Vertex> &data)
     {
         FASTTSP estGraph(data);
         bestCost = estGraph.cost();
-        //bestPath = estGraph.givePath();
+        bestPath = estGraph.givePath();
     }
     //std::cerr << "Best path length = " << bestCost << '\n';
-    for (size_t n = 0; n < data.size(); n++) bestPath[n] = n;
+    //for (size_t n = 0; n < data.size(); n++) bestPath[n] = n;
     /* std::cerr << "Current path =";
     for (auto her : bestPath) std::cerr << ' ' << her;
     std::cerr << "\n\n" << "Path                               PL   curCost     arm 1     arm 2       MST     Total  Promising?\n"; */

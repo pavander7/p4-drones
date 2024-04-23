@@ -20,7 +20,7 @@ public:
     double dist() { return double(total_C); }
     friend std::ostream &operator<<(std::ostream &os, const MST &elt);
     bool valid(Vertex v, Vertex w);
-    bool valid(size_t v, size_t w, const std::vector<Vertex> data) {return valid(data[v], data[w]);}
+    bool valid(size_t v, size_t w, const std::vector<Vertex> &data) {return valid(data[v], data[w]);}
     ~MST();
 private:
     class NodeComp;

@@ -17,16 +17,17 @@ public:
     explicit FASTTSP(const std::vector<Vertex> &data);
     friend std::ostream &operator<<(std::ostream &os, const FASTTSP &elt);
     double cost() {return total_C;}
-    //std::vector<size_t> givePath() const;
+    std::vector<size_t> givePath() const {return finalPath;}
 private:
     class fast_node;
     class fast_edge;
     double total_C;
-    std::vector<fast_edge> finalPath;
-    void swapEdge(std::vector<fast_edge> &path, std::size_t x, std::size_t y, const std::vector<Vertex> &data);
+    std::vector<size_t> finalPath;
+    void swapEdge(std::vector<size_t> &path, std::size_t x, std::size_t y);
+    void twoopt(std::vector<size_t> &path, const std::vector<Vertex> &data);
 };
 
-class FASTTSP::fast_node 
+/* class FASTTSP::fast_node 
 {
 public:
     explicit fast_node(size_t vtx_in) : v_i(vtx_in), E(nullptr), prev(nullptr) {}
@@ -63,6 +64,6 @@ public:
 private:
     size_t a_i;
     size_t b_i;
-};
+}; */
 
 #endif
