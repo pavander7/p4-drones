@@ -11,13 +11,6 @@ using namespace std;
 
 void OPTTSP::genPerms(vector<size_t> &path, size_t permLength, const std::vector<Vertex> &data)
 {
-    /* //cerr << "genPerms on [";
-    bool first = true;
-    for (auto vtx : path) {
-        if (!first) cout << ", ";
-        else first = false;
-        cout << vtx.i;
-    } //cerr << "] with permLength " << permLength << endl; */
     if (permLength == path.size())
     {
         // Do something with the path
@@ -47,7 +40,6 @@ bool OPTTSP::promising(vector<size_t> &path, size_t permLength, const std::vecto
 {
     if (path.size() - permLength < 5) return true;
     //calculate lower bound
-    //vector<size_t> setPortion(path.begin(), path.begin() + int(permLength));
     if (permLength <= size_t(1)) return true;
     double setCost = 0;
     for (size_t i = 0; i < permLength - size_t(1); i++) setCost += sqrt(data[path[i]].pow_dist(data[path[i+size_t(1)]]));

@@ -38,17 +38,3 @@ bool Vertex::operator<(Vertex const &other) const
     else
         return (this->x < other.x);
 }
-bool VertexComp::operator()(const Vertex &a, const Vertex &b) const
-{
-    if (a == b)
-        return true;
-    else if (a.x == b.x)
-    {
-        if (a.y == b.y)
-            return true;
-        else
-            return (a.y < b.y);
-    }
-    else
-        return (a.x < b.x);
-}

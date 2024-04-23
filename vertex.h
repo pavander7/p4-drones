@@ -16,9 +16,4 @@ struct Vertex
     uint64_t pow_dist(Vertex const &other) const;
 };
 
-struct VertexComp 
-{
-    bool operator()(const Vertex &a, const Vertex &b) const;
-};
-
 #endif

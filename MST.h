@@ -54,42 +54,4 @@ private:
     size_t b;
 };
 
-/* class MST::NodeComp 
-{
-public:
-    explicit NodeComp(const std::vector<Vertex> &data_in) : data (&data_in) {}
-    bool operator()(const mst_edge &a, const mst_edge &b) const
-    {
-        auto a_c = a.cost(*data);
-        auto b_c = b.cost(*data);
-        if (a_c == b_c)
-            return true;
-        else
-            return (a_c > b_c);
-    }
-    bool operator()(const mst_edge *a, const mst_edge *b) const
-    {
-        auto a_c = a->cost(*data);
-        auto b_c = b->cost(*data);
-        if (a_c == b_c)
-            return true;
-        else
-            return (a_c > b_c);
-    }
-private:
-    std::vector<Vertex>* const data;
-}; */
-
-/* class MST::mst_tree {
-public: 
-    explicit mst_tree(size_t datum) {Q.insert(datum);}
-    void encorporate(mst_tree &other, mst_edge* connection);
-    bool connected(mst_edge &elt);
-    friend class MST;
-    bool contains(size_t i) {return (Q.count(i) != 0);}
-private:
-    std::vector<mst_edge*> E;
-    std::unordered_set<size_t> Q;
-}; */
-
 #endif

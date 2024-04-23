@@ -6,31 +6,6 @@
 using namespace std;
 
 // FASTTSP functions
-/* FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) { //nearest neighbor heuristic
-    unordered_set<Vertex> Q;
-    fast_node* root;
-    size_t numNodes = 1;
-    for (auto datum : data) {Q.insert(datum);}
-    auto him = data.front();
-    fast_node* prev = nullptr;
-    while (!Q.empty()) {
-        Q.erase(him);
-        int c = 0;
-        Vertex next;
-        for (Vertex her : Q) {
-            if (c == 0 || him.pow_dist(her) < c) {
-                next = her;
-                c = him.pow_dist(her);
-            }
-        } fast_node* temp = new fast_node(him, c);
-        if (prev == nullptr) root = temp;
-        else prev->reassign(temp);
-        total_C += c;
-        prev = temp;
-        him = next;
-        numNodes++;
-    } root->reassign(prev);
- */
 FASTTSP::FASTTSP(const std::vector<Vertex> &data) : total_C(0) // total_C initialized as 0 for later incrementation
 { 
     //cerr << "Beginning FASTTSP on dataset of size: " << data.size() << '\n';
@@ -53,44 +28,22 @@ FASTTSP::FASTTSP(const std::vector<Vertex> &data) : total_C(0) // total_C initia
 
     //cerr << "1.1: import dataset\n";
     list<size_t> tour {0, 1};
-    //unordered_map<size_t, fast_node *> F; // maps created nodes to their starting index for later random access, F.A. elt € F, elt € T_e
     vector<size_t> Q; // Q = D - !T_v : set of the indices of all vertices not yet in DLL
     for (size_t I = 2; I < data.size(); I++) { Q.push_back(I); } // add all vertices to Q, 0 & 1 are ommitted since they would be immediately removed in 1.2
-    total_C = size_t(2) * sqrt(data[0].pow_dist(data[1]));
-    //cerr << "1.2: initialize DLL\n";
-    //cerr << "1.2.1: initialize basic member variables\n";
-    //fast_node* root; // constant time access pointer into DLL at arbitrary posiiton
-    /* size_t numNodes = 2; // tracks number of nodes, for later deconstruction, starts as 2
-    {
-        //cerr << "1.2.2: identify starting vertices\n";
-        //auto vtx1 = data[0]; // a
-        //auto vtx2 = data[1]; // b
-        //cerr << "1.2.3: construct edges without pointers\n";
-        auto node1 = new fast_node(0); // ab
-        auto node2 = new fast_node(1); // ba
-        //cerr << "1.2.4: connect edges by initializing pointers\n";
-        node1->reassign(node2);
-        node2->reassign(node1); 
-        //cerr << "1.2.5: enter edges into F for tracking\n";
-        F.emplace(size_t(0), node1);
-        F.emplace(size_t(1), node2);
-        //cerr << "1.2.6: assign access point\n";
-        root = node1;
-    } */
+    //total_C = size_t(2) * sqrt(data[0].pow_dist(data[1]));
 
-
-    //cerr << "1.3: execute CIH\n";
+    //cerr << "1.2: execute CIH or NIH\n";
     while (!Q.empty()) // true as long as there are unconnected points
     {
         //cerr << "Remaining Vertices: " << Q.size() << '\n';
-        //cerr << "1.3.1: define variables\n";
+        //cerr << "1.2.1: define variables\n";
         double c = 0; // cost w(c) of best insertion c, where c is an insertion of the form ab -> axb, where a, b € T_v && x € Q
         size_t to_add = data.size(); // best vertex c_x to include (initialized to arbitrary default value)
-        auto after = tour.begin();
-        //fast_node *before = nullptr; // pointer to the edge c_ab that will be affected by insertion
+        auto after = tour.begin(); // pointer to the edge c_ab that will be affected by insertion
         size_t w = Q.back();
         Q.pop_back();
-        //cerr << "1.3.2: loop through every edge in DLL\n";  
+
+        //cerr << "1.2.2: loop through every edge in DLL\n";  
         auto it = tour.begin();
         auto next = ++tour.begin();
         while (it != tour.end())
@@ -99,22 +52,23 @@ FASTTSP::FASTTSP(const std::vector<Vertex> &data) : total_C(0) // total_C initia
             size_t u = *next;
             // let ab be the edge defined by elt
             // ab € T_e, a, b € T_v
-            //cerr << "1.3.3: loop through every unconnected vertex\n";
         
             // let x be the candidate vertex
-            //cerr << "1.3.3.1: define & analyze x\n";
+            //cerr << "1.2.3: define & analyze x\n";
             Vertex candidate = data[w]; // x
             Vertex a = data[v];
             Vertex b = data[u];
 
+            // CIH version
             double left_leg = sqrt(candidate.pow_dist(a)); // w(ax)
             double right_leg = sqrt(candidate.pow_dist(b)); // w(xb)
             double curr_dist = sqrt(a.pow_dist(b)); // w(ab)
             double can_dist = (left_leg + right_leg) - curr_dist; // w(axb) == w(ax) + w(xb) - w(ab): increase to total cost of the path if x is inserted between a & b
             
+            // NIH version
             //double can_dist = sqrt(candidate.pow_dist(a));
 
-            //cerr << "1.3.3.1: evaluate insertion (ab -> axb)\n";
+            //cerr << "1.3.4: evaluate insertion (ab -> axb)\n";
             if (c == 0 || can_dist < c) // if w(c) == 0, c is undefined
             {                           // if (w(axb) < c), c should be disregarded in favor of axb
                 to_add = w; // c_x = x
@@ -127,55 +81,37 @@ FASTTSP::FASTTSP(const std::vector<Vertex> &data) : total_C(0) // total_C initia
             if (next == tour.end()) next = tour.begin();
         }
 
-        //cerr << "1.3.3: execute best insertion c\n";
+        //cerr << "1.4: execute best insertion c\n";
         if (to_add < data.size()) { // only execute if c is defined
-            //Q.erase(to_add); // remove c_x from Q
+
+            // NIH version
             /* auto left = after; if (after == tour.begin()) left = tour.end(); left--;
             auto right = after; right++; if (after == tour.end()) left = tour.begin();
             uint64_t lDist = data[*left].pow_dist(data[to_add]);
             uint64_t rDist = data[*right].pow_dist(data[to_add]);
             if (rDist < lDist) ++after; */
+
             if (*after == tour.back()) tour.push_back(to_add);
             else tour.insert(++after, to_add);
-            total_C += c;
-            //F.emplace(to_add, before->encorporate(to_add)); // encorporate performs the insertion, adds the resulting node to F
-            //numNodes++; // updates node count
+            //total_C += c;
         }
     } 
 
     //cerr << "stage 2: 2-opt heuristic\n";
 
     //cerr << "2.1: convert T from DLL to vector\n";
-    /* fast_node* current = root; // pointer to act as iterator on DLL
-    while (numNodes != 0) { // exectutes deletion exactly as many times as construction
-        fast_edge *currEdge = nullptr; // ab defined dynamically to account for special case
-        if (numNodes == 1) currEdge = new fast_edge(current->v_i, finalPath[0].a_i); // special case: accounts for loop
-        else currEdge = new fast_edge(current->v_i, current->E->v_i); // default case
-        this->finalPath.push_back(*currEdge); // adds ab to new representation of T
-        fast_node* temp = current; // pop node
-        current = current->next(); // current++
-        delete temp; // delete now useless node
-        delete currEdge; // delete dynamically allocated edge
-        numNodes--;
-    } */
     finalPath = vector<size_t>(tour.begin(), tour.end());
     //cerr << "2.2: loop through edges in T\n";
-    twoopt(finalPath, data);
     //twoopt(finalPath, data);
+    //twoopt(finalPath, data);
+
     //cerr << "stage 3: report results\n";
-    /* for (size_t i = 0; i < finalPath.size(); i++) {
+    for (size_t i = 0; i < finalPath.size(); i++) {
         auto a = data[finalPath[i]];
         auto b = data[finalPath[(i + size_t(1)) % tour.size()]];
         total_C += sqrt(a.pow_dist(b)); // sums total cost of T by iterating through each edge
-    } */
+    }
 }
-
-/* FASTTSP::fast_node *FASTTSP::fast_node::encorporate(size_t i)
-{
-    fast_node *ptr = new fast_node(i, this->E); // construct xb
-    this->reassign(ptr); // change ab to ax
-    return ptr;
-} */
 std::ostream &operator<<(std::ostream &os, const FASTTSP &elt)
 {
     os << elt.total_C << endl;
@@ -183,7 +119,7 @@ std::ostream &operator<<(std::ostream &os, const FASTTSP &elt)
     os << '\n';
     return os;
 }
-void FASTTSP::swapEdge(vector<size_t> &path, size_t x, size_t y) {
+/* void FASTTSP::swapEdge(vector<size_t> &path, size_t x, size_t y) {
     // let xa...by define the path between x and y such that xa and by are edges, and ... is a valid subpath between a and b
     if (x == y) return; // if x = y, nothing left to swap
     size_t x_next = (x + size_t(1) % path.size()); // a
@@ -196,13 +132,7 @@ void FASTTSP::swapEdge(vector<size_t> &path, size_t x, size_t y) {
     else { // "pass" swap to next pair of edges
         swapEdge(path, x_next, y_prev); // recursively call swapEdge to reverse remaining inner path "..."
     }
-}
-/* std::vector<size_t> FASTTSP::givePath() const {
-    vector<size_t> goodPath;
-    goodPath.reserve(finalPath.size());
-    for (auto e : finalPath) goodPath.push_back(e.a_i);
-    return goodPath;
-} */
+} 
 void FASTTSP::twoopt(std::vector<size_t> &path, const std::vector<Vertex> &data) {
     for (size_t x = 0; x < path.size() - size_t(2); x++) {
         //cerr << "2.2.1: identify first candidate edge ab\n";
@@ -225,5 +155,5 @@ void FASTTSP::twoopt(std::vector<size_t> &path, const std::vector<Vertex> &data)
         }
         //cerr << (x + size_t(1)) << " edges processed.\n";
     }
-}
+} */
 // FASTTSP functions
