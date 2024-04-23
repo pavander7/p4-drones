@@ -33,7 +33,7 @@ class MST::mst_edge
 {
 public:
     mst_edge(size_t a_in, size_t b_in) : a(a_in), b(b_in) {}
-    int area(std::vector<Vertex> &data) { return vtx_a(data).area(); }
+    int area(const std::vector<Vertex> &data) { return vtx_a(data).area(); }
     //uint64_t pow_dist(const mst_edge &other, const std::vector<Vertex> &data) { return this->vtx_a(data).pow_dist(other.vtx_a(data)); }
     uint64_t pow_dist(size_t other, const std::vector<Vertex> &data) { return this->vtx_a(data).pow_dist(data[other]); }
     uint64_t cost(const std::vector<Vertex> &data) const {return vtx_a(data).pow_dist(vtx_b(data));}

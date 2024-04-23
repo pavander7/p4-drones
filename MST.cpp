@@ -8,7 +8,7 @@ using namespace std;
 // MST functions
 MST::MST(vector<Vertex> &data, bool restrict_in) : restrict(restrict_in)
 { // Prim's Algorithm
-    unordered_map<size_t, Vertex> Q;
+    unordered_set<size_t> Q;
     //priority_queue<mst_edge *, vector<mst_edge *>, NodeComp> poss;
     unordered_map<size_t, size_t> poss;
     total_C = 0;
@@ -17,10 +17,10 @@ MST::MST(vector<Vertex> &data, bool restrict_in) : restrict(restrict_in)
         Q.emplace(I, data[I]);
     }
     Vertex v = data.front();
-    for (auto [w_i, w] : Q)
+    for (auto w_i : Q)
     {
         //Vertex w = data[w_i];
-        if (this->valid(v,w))
+        if (this->valid(v,data[w_i]))
         {
             poss.emplace(w_i, 0);
         }
@@ -44,10 +44,10 @@ MST::MST(vector<Vertex> &data, bool restrict_in) : restrict(restrict_in)
             Q.erase(her->b);
             F.push_back(her);
             total_C += sqrt(her->cost(data));
-            for (auto [w_i, w] : Q)
+            for (auto w_i : Q)
             {
                 //Vertex w = data[w_i];
-                if (this->valid(her->vtx_b(data),w))
+                if (this->valid(her->vtx_b(data), data[w_i]))
                 {
                     if (poss.count(w_i) == 0) poss.emplace(w_i, her->b);
                     else {

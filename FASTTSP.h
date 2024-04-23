@@ -36,7 +36,7 @@ public:
         E = next;
         next->prev = E;
     }
-    Vertex vtx(std::vector<Vertex> &data) const {return data[v_i];}
+    Vertex vtx(const std::vector<Vertex> &data) const {return data[v_i];}
     uint64_t dist(std::vector<Vertex> &data) const {return vtx(data).pow_dist(E->vtx(data));}
     fast_node *encorporate(size_t i);
     fast_node *next() { return this->E; }
@@ -56,7 +56,6 @@ private:
 class FASTTSP::fast_edge 
 {
 public:
-    fast_edge(size_t &a_in, size_t &b_in) : a_i(a_in), b_i(b_in) {}
     fast_edge(const size_t &a_in, const size_t &b_in) : a_i(a_in), b_i(b_in) {}
     friend class FASTTSP;
     size_t first() {return a_i;}
