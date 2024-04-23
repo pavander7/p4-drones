@@ -1,6 +1,7 @@
 // 1761414855B69983BD8035097EFBD312EB0527F0
 
 #include "FASTTSP.h"
+#include <list>
 
 using namespace std;
 
@@ -30,7 +31,7 @@ using namespace std;
         numNodes++;
     } root->reassign(prev);
  */
-FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized as 0 for later incrementation
+FASTTSP::FASTTSP(const std::vector<Vertex> &data) : total_C(0) // total_C initialized as 0 for later incrementation
 { 
     //cerr << "Beginning FASTTSP on dataset of size: " << data.size() << '\n';
     //NOTATION:
@@ -79,14 +80,14 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
     //cerr << "1.3: execute CIH\n";
     while (!Q.empty()) // true as long as there are unconnected points
     {
-        //cerr << "Remaining Vertices: " << Q.size() << '\n';
+        cerr << "Remaining Vertices: " << Q.size() << '\n';
         //cerr << "1.3.1: define variables\n";
         double c = 0; // cost w(c) of best insertion c, where c is an insertion of the form ab -> axb, where a, b € T_v && x € Q
         size_t to_add = data.size(); // best vertex c_x to include (initialized to arbitrary default value)
         fast_node *before = nullptr; // pointer to the edge c_ab that will be affected by insertion
 
         //cerr << "1.3.2: loop through every edge in DLL\n";
-        for (auto elt : F)
+        for (auto [key, elt] : F)
         {
             // let ab be the edge defined by elt
             // ab € T_e, a, b € T_v
@@ -96,9 +97,9 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
                 // let x be the candidate vertex
                 //cerr << "1.3.3.1: define & analyze x\n";
                 Vertex candidate = data[n]; // x
-                double left_leg = sqrt(candidate.pow_dist(elt.second->vtx(data))); // w(ax)
-                double right_leg = sqrt(candidate.pow_dist(elt.second->E->vtx(data))); // w(xb)
-                double curr_dist = sqrt(elt.second->vtx(data).pow_dist(elt.second->E->vtx(data))); // w(ab)
+                double left_leg = sqrt(candidate.pow_dist(elt->vtx(data))); // w(ax)
+                double right_leg = sqrt(candidate.pow_dist(elt->E->vtx(data))); // w(xb)
+                double curr_dist = sqrt(elt->vtx(data).pow_dist(elt->E->vtx(data))); // w(ab)
                 double can_dist = (left_leg + right_leg) - curr_dist; // w(axb) == w(ax) + w(xb) - w(ab): increase to total cost of the path if x is inserted between a & b
                 
                 //uint64_t can_dist = candidate.pow_dist(elt.second->vtx(data));
@@ -108,7 +109,7 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
                 {                           // if (w(axb) < c), c should be disregarded in favor of axb
                     to_add = n; // c_x = x
                     c = can_dist; // w(c) = w(axb)
-                    before = elt.second; // c_ab = ab
+                    before = elt; // c_ab = ab
                 }
             }
         }
@@ -138,7 +139,7 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
     }
 
     //cerr << "2.2: loop through edges in T\n";
-    for (size_t x = 0; x < finalPath.size(); x++) {
+    /* for (size_t x = 0; x < finalPath.size(); x++) {
         //cerr << "2.2.1: identify first candidate edge ab\n";
         fast_edge X = finalPath[x];
         //cerr << "2.3: loop though edges in T that do not overlap ab\n";
@@ -155,7 +156,7 @@ FASTTSP::FASTTSP(std::vector<Vertex> &data) : total_C(0) // total_C initialized 
             }
         }
         //cerr << (x + size_t(1)) << " edges processed.\n";
-    }
+    } */
 
     //cerr << "stage 3: report results\n";
     for (auto ab : finalPath) total_C += sqrt(ab.cost(data)); // sums total cost of T by iterating through each edge
@@ -174,7 +175,7 @@ std::ostream &operator<<(std::ostream &os, const FASTTSP &elt)
     os << '\n';
     return os;
 }
-void FASTTSP::swapEdge(vector<fast_edge> &path, size_t x, size_t y, std::vector<Vertex> &data) {
+void FASTTSP::swapEdge(vector<fast_edge> &path, size_t x, size_t y, const std::vector<Vertex> &data) {
     // let xa...by define the path between x and y such that xa and by are edges, and ... is a valid subpath between a and b
     if (x == y) return; // if x = y, nothing left to swap
     size_t x_next = (x + size_t(1) % path.size()); // a

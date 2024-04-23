@@ -16,17 +16,17 @@ class MST
 public:
     class mst_edge;
     //class mst_tree;
-    MST(std::vector<Vertex> &data, bool restrict_in);
+    MST(const std::vector<Vertex> &data, bool restrict_in);
     double dist() { return double(total_C); }
     friend std::ostream &operator<<(std::ostream &os, const MST &elt);
     bool valid(Vertex v, Vertex w);
-    bool valid(size_t v, size_t w, std::vector<Vertex> data) {return valid(data[v], data[w]);}
+    bool valid(size_t v, size_t w, const std::vector<Vertex> data) {return valid(data[v], data[w]);}
     ~MST();
 private:
     class NodeComp;
     double total_C;
     bool restrict;
-    std::deque<mst_edge*> F;
+    std::vector<mst_edge*> F;
 };
 
 class MST::mst_edge 
@@ -54,10 +54,10 @@ private:
     size_t b;
 };
 
-class MST::NodeComp 
+/* class MST::NodeComp 
 {
 public:
-    explicit NodeComp(std::vector<Vertex> &data_in) : data (&data_in) {}
+    explicit NodeComp(const std::vector<Vertex> &data_in) : data (&data_in) {}
     bool operator()(const mst_edge &a, const mst_edge &b) const
     {
         auto a_c = a.cost(*data);
@@ -78,7 +78,7 @@ public:
     }
 private:
     std::vector<Vertex>* const data;
-};
+}; */
 
 /* class MST::mst_tree {
 public: 
